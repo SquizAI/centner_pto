@@ -208,28 +208,34 @@ END;
 $$ LANGUAGE plpgsql STABLE;
 
 -- Function: Get user's upcoming volunteer commitments
--- Returns array of opportunity titles and dates
--- Usage: SELECT get_user_upcoming_commitments('user-uuid');
+-- Returns array of opportunity details with signup information
+-- Usage: SELECT * FROM get_user_upcoming_commitments('user-uuid');
 CREATE OR REPLACE FUNCTION get_user_upcoming_commitments(user_uuid UUID)
 RETURNS TABLE(
+    signup_id UUID,
     opportunity_id UUID,
     title TEXT,
     date DATE,
     start_time TIME,
     end_time TIME,
     location TEXT,
-    signup_notes TEXT
+    campus TEXT,
+    signup_notes TEXT,
+    signup_status TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        vo.id,
+        vs.id AS signup_id,
+        vo.id AS opportunity_id,
         vo.title,
         vo.date,
         vo.start_time,
         vo.end_time,
         vo.location,
-        vs.notes
+        vo.campus,
+        vs.notes AS signup_notes,
+        vs.status AS signup_status
     FROM volunteer_signups vs
     JOIN volunteer_opportunities vo ON vs.opportunity_id = vo.id
     WHERE vs.user_id = user_uuid
@@ -238,7 +244,7 @@ BEGIN
     AND vo.date >= CURRENT_DATE
     ORDER BY vo.date ASC, vo.start_time ASC;
 END;
-$$ LANGUAGE plpgsql STABLE;
+$$ LANGUAGE plpgsql STABLE SECURITY INVOKER;
 
 -- =====================================================
 -- TRIGGERS

@@ -3,6 +3,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
+// UUID validation regex
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 /**
  * Sign up for a volunteer opportunity
  */
@@ -11,6 +15,14 @@ export async function signupForOpportunity(
   notes?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Validate UUID format
+    if (!UUID_REGEX.test(opportunityId)) {
+      return {
+        success: false,
+        error: 'Invalid opportunity ID format',
+      };
+    }
+
     const supabase = await createClient();
 
     // Get authenticated user
@@ -43,30 +55,8 @@ export async function signupForOpportunity(
       }
     }
 
-    // Check if opportunity is full using the helper function
-    const { data: isFull, error: fullCheckError } = await supabase.rpc(
-      'is_opportunity_full',
-      {
-        opportunity_uuid: opportunityId,
-      }
-    );
-
-    if (fullCheckError) {
-      console.error('Error checking if opportunity is full:', fullCheckError);
-      return {
-        success: false,
-        error: 'Failed to verify opportunity availability',
-      };
-    }
-
-    if (isFull) {
-      return {
-        success: false,
-        error: 'This opportunity is already fully booked',
-      };
-    }
-
-    // Create signup
+    // Create signup - the database trigger will handle capacity checking atomically
+    // This prevents race conditions by letting the database enforce constraints
     const { error: insertError } = await supabase
       .from('volunteer_signups')
       .insert({
@@ -77,10 +67,57 @@ export async function signupForOpportunity(
       });
 
     if (insertError) {
-      console.error('Error creating signup:', insertError);
+      // Check if it's a capacity error from the database trigger
+      if (
+        insertError.message.includes('full') ||
+        insertError.message.includes('exceed') ||
+        insertError.message.includes('capacity')
+      ) {
+        return {
+          success: false,
+          error: 'This opportunity just filled up. Please try another one.',
+        };
+      }
+
+      // Check if it's the unique constraint (user already signed up)
+      if (
+        insertError.message.includes('unique') ||
+        insertError.code === '23505'
+      ) {
+        return {
+          success: false,
+          error: 'You have already signed up for this opportunity.',
+        };
+      }
+
+      // Log server-side only in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error creating signup:', insertError);
+      }
+
       return {
         success: false,
         error: 'Failed to sign up. Please try again.',
+      };
+    }
+
+    // Verify the signup was created with correct user_id (defense in depth)
+    const { data: verifySignup } = await supabase
+      .from('volunteer_signups')
+      .select('user_id')
+      .eq('opportunity_id', opportunityId)
+      .eq('user_id', user.id)
+      .eq('status', 'confirmed')
+      .single();
+
+    if (!verifySignup || verifySignup.user_id !== user.id) {
+      // This should never happen with proper RLS, but defense in depth
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Authorization verification failed after signup');
+      }
+      return {
+        success: false,
+        error: 'Signup verification failed. Please contact support.',
       };
     }
 
@@ -105,6 +142,14 @@ export async function cancelSignup(
   signupId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Validate UUID format
+    if (!UUID_REGEX.test(signupId)) {
+      return {
+        success: false,
+        error: 'Invalid signup ID format',
+      };
+    }
+
     const supabase = await createClient();
 
     // Get authenticated user

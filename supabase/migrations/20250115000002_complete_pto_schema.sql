@@ -208,8 +208,13 @@ CREATE POLICY "Admins can manage opportunities" ON volunteer_opportunities FOR A
 
 ALTER TABLE volunteer_signups ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own signups" ON volunteer_signups FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can create signups" ON volunteer_signups FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can create signups" ON volunteer_signups FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own signups" ON volunteer_signups FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own signups" ON volunteer_signups FOR DELETE USING (auth.uid() = user_id);
 CREATE POLICY "Admins can view all signups" ON volunteer_signups FOR SELECT USING (
+  EXISTS (SELECT 1 FROM auth.users WHERE auth.uid() = id AND raw_user_meta_data->>'role' = 'admin')
+);
+CREATE POLICY "Admins can manage all signups" ON volunteer_signups FOR ALL USING (
   EXISTS (SELECT 1 FROM auth.users WHERE auth.uid() = id AND raw_user_meta_data->>'role' = 'admin')
 );
 

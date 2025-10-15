@@ -119,17 +119,13 @@ export function VolunteerClientWrapper({
   return (
     <div className="space-y-8">
       {/* Filter Section */}
-      <VolunteerFilter
-        currentFilters={filters}
-        onFilterChange={handleFilterChange}
-      />
+      <VolunteerFilter filters={filters} onFilterChange={handleFilterChange} />
 
       {/* Opportunities Grid */}
       {filteredOpportunities.length > 0 ? (
         <VolunteerGrid
           opportunities={filteredOpportunities}
-          onSignupClick={handleSignupClick}
-          showSignupButton
+          onSignUp={handleSignupClick}
           columns={3}
         />
       ) : (

@@ -47,6 +47,8 @@ export function MyShiftsClientWrapper({ userId }: MyShiftsClientWrapperProps) {
       if (error) {
         console.error('Error fetching user shifts:', error);
         toast.error('Failed to load your volunteer shifts');
+        setShifts([]); // Set empty array on error
+        setIsLoading(false); // MUST set loading to false
         return;
       }
 
