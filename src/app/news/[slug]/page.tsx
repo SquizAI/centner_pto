@@ -6,7 +6,8 @@ import { NewsPost } from '@/types/news.types';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-// Revalidate every hour (3600 seconds)
+// Make this route dynamic to avoid Edge Runtime issues with Supabase
+export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
 // Fetch single post by slug
@@ -52,24 +53,6 @@ async function getRelatedPosts(
   }
 
   return posts || [];
-}
-
-// Generate static params for all published posts (ISR)
-export async function generateStaticParams() {
-  const supabase = await createClient();
-
-  const { data: posts, error } = await supabase
-    .from('news_posts')
-    .select('slug')
-    .eq('published', true);
-
-  if (error || !posts) {
-    return [];
-  }
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
 }
 
 // Generate dynamic metadata for SEO
