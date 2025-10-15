@@ -7,6 +7,7 @@ export type Photo = Tables<'photos'>;
 // Extended photo type with computed fields for display
 export interface PhotoWithUrl extends Photo {
   url?: string;
+  thumbnail_url?: string;
   title?: string | null;
   alt_text?: string | null;
   width?: number | null;
@@ -17,9 +18,16 @@ export interface PhotoWithUrl extends Photo {
 export type GalleryCampus = 'all' | 'preschool' | 'elementary' | 'middle-high';
 
 // Extended types with computed fields
+// Note: published, publish_date, slug fields will be available after applying the photo gallery migration
 export interface AlbumWithStats extends PhotoAlbum {
   photo_count: number;
   total_size?: number;
+  published?: boolean;
+  publish_date?: string;
+  slug?: string;
+  event_date?: string;
+  location?: string;
+  cover_photo_url?: string;
 }
 
 // Campus configuration for styling and labels
@@ -71,7 +79,7 @@ export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 // Lightbox navigation
 export interface LightboxPhoto {
   id: string;
-  url: string;
+  url?: string;
   title?: string | null;
   caption?: string | null;
   alt_text?: string | null;

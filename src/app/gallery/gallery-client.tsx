@@ -25,8 +25,10 @@ export function GalleryPageClient({ albums }: GalleryPageClientProps) {
       if (selectedCampus === 'all') {
         return true;
       }
+      // Handle both old (array) and new (string) campus schema
+      const campusValue = Array.isArray(album.campus) ? album.campus[0] : album.campus;
       // Otherwise filter by specific campus
-      return album.campus === selectedCampus || album.campus === 'all';
+      return campusValue === selectedCampus || campusValue === 'all';
     });
   }, [albums, selectedCampus]);
 

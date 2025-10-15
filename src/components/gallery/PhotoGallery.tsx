@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
-import { Photo } from '@/types/gallery.types';
+import { PhotoWithUrl } from '@/types/gallery.types';
 
 interface PhotoGalleryProps {
-  photos: Photo[];
-  onPhotoClick?: (photo: Photo, index: number) => void;
+  photos: PhotoWithUrl[];
+  onPhotoClick?: (photo: PhotoWithUrl, index: number) => void;
   className?: string;
   loading?: boolean;
 }
@@ -111,7 +111,7 @@ export function PhotoGallery({
               }}
             >
               <Image
-                src={photo.thumbnail_url || photo.url}
+                src={photo.thumbnail_url || photo.url || '/placeholder-image.jpg'}
                 alt={photo.alt_text || photo.title || 'Photo'}
                 fill
                 className={cn(

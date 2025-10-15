@@ -6,49 +6,34 @@ import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendar-styles.css'
 import { motion } from 'framer-motion'
-import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2 } from 'lucide-react'
+import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2, Ticket, DollarSign } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Event as EventType } from '@/types/events'
+import TicketPurchaseDialog from '@/components/events/TicketPurchaseDialog'
+import RSVPDialog from '@/components/events/RSVPDialog'
 import { toast } from 'sonner'
 
 const localizer = momentLocalizer(moment)
 
-interface Event {
-  id: string
-  title: string
-  description: string
+interface CalendarEvent extends EventType {
   start: Date
   end: Date
-  location?: string
-  campus?: string
-  max_attendees?: number
-  rsvp_count?: number
-  image_url?: string
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([])
+  const [events, setEvents] = useState<CalendarEvent[]>([])
   const [view, setView] = useState<View>('month')
   const [date, setDate] = useState(new Date())
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [loading, setLoading] = useState(true)
+  const [ticketDialogOpen, setTicketDialogOpen] = useState(false)
   const [rsvpDialogOpen, setRsvpDialogOpen] = useState(false)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
-  const [rsvpForm, setRsvpForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    attendees: 1,
-    notes: ''
-  })
-  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     loadEvents()
@@ -59,34 +44,16 @@ export default function EventsPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('events')
-        .select(`
-          id,
-          title,
-          description,
-          event_date,
-          end_date,
-          location,
-          campus,
-          max_attendees,
-          current_attendees,
-          image_url
-        `)
+        .select('*')
         .eq('status', 'published')
         .order('event_date', { ascending: true })
 
       if (error) throw error
 
-      const formattedEvents: Event[] = (data || []).map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.description,
+      const formattedEvents: CalendarEvent[] = (data || []).map((event) => ({
+        ...event,
         start: new Date(event.event_date),
         end: new Date(event.end_date || event.event_date),
-        location: event.location,
-        campus: event.campus?.[0] || 'all',
-        max_attendees: event.max_attendees,
-        rsvp_count: event.current_attendees || 0,
-        image_url: event.image_url,
       }))
 
       setEvents(formattedEvents)
@@ -97,7 +64,7 @@ export default function EventsPage() {
     }
   }
 
-  const eventStyleGetter = (event: Event) => {
+  const eventStyleGetter = (event: CalendarEvent) => {
     const campusColors: { [key: string]: string } = {
       preschool: 'hsl(var(--preschool))',
       elementary: 'hsl(var(--elementary))',
@@ -116,47 +83,17 @@ export default function EventsPage() {
     }
   }
 
-  const handleSelectEvent = (event: Event) => {
+  const handleSelectEvent = (event: CalendarEvent) => {
     setSelectedEvent(event)
   }
 
-  const handleRSVP = async () => {
+  const handleActionButton = () => {
     if (!selectedEvent) return
 
-    // Validate form
-    if (!rsvpForm.name || !rsvpForm.email) {
-      toast.error('Please fill in required fields')
-      return
-    }
-
-    setSubmitting(true)
-    try {
-      const supabase = createClient()
-      // Note: Current schema requires user_id (auth), but for now we'll store guest info in notes
-      const guestInfo = `Name: ${rsvpForm.name}, Email: ${rsvpForm.email}${rsvpForm.phone ? `, Phone: ${rsvpForm.phone}` : ''}`
-      const fullNotes = rsvpForm.notes ? `${guestInfo}\n\n${rsvpForm.notes}` : guestInfo
-
-      const { error } = await supabase
-        .from('event_rsvps')
-        .insert({
-          event_id: selectedEvent.id,
-          user_id: null, // Will be populated once auth is implemented
-          status: 'confirmed',
-          guests_count: rsvpForm.attendees,
-          notes: fullNotes
-        })
-
-      if (error) throw error
-
-      toast.success('RSVP submitted successfully!')
-      setRsvpDialogOpen(false)
-      setRsvpForm({ name: '', email: '', phone: '', attendees: 1, notes: '' })
-      loadEvents() // Refresh to get updated RSVP count
-    } catch (error) {
-      console.error('Error submitting RSVP:', error)
-      toast.error('Failed to submit RSVP. Please try again.')
-    } finally {
-      setSubmitting(false)
+    if (selectedEvent.ticket_enabled) {
+      setTicketDialogOpen(true)
+    } else {
+      setRsvpDialogOpen(true)
     }
   }
 
@@ -302,32 +239,65 @@ export default function EventsPage() {
                         </div>
                       )}
 
-                      {selectedEvent.max_attendees && (
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-primary mt-0.5" />
-                          <div>
-                            <p className="text-sm">
-                              {selectedEvent.rsvp_count} / {selectedEvent.max_attendees} attendees
-                            </p>
-                            <div className="w-full bg-muted rounded-full h-2 mt-2">
-                              <div
-                                className="bg-primary h-2 rounded-full transition-all"
-                                style={{
-                                  width: `${(selectedEvent.rsvp_count! / selectedEvent.max_attendees) * 100}%`,
-                                }}
-                              ></div>
+                      {selectedEvent.ticket_enabled ? (
+                        <>
+                          <div className="flex items-start gap-3">
+                            <DollarSign className="w-5 h-5 text-primary mt-0.5" />
+                            <div>
+                              <p className="text-sm font-semibold">
+                                ${selectedEvent.ticket_price?.toFixed(2)} per ticket
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {(selectedEvent.ticket_quantity || 0) - (selectedEvent.tickets_sold || 0)} tickets available
+                              </p>
                             </div>
                           </div>
-                        </div>
+                          {selectedEvent.ticket_quantity && (
+                            <div className="flex items-start gap-3">
+                              <Ticket className="w-5 h-5 text-primary mt-0.5" />
+                              <div className="w-full">
+                                <p className="text-sm mb-2">
+                                  {selectedEvent.tickets_sold} / {selectedEvent.ticket_quantity} sold
+                                </p>
+                                <div className="w-full bg-muted rounded-full h-2">
+                                  <div
+                                    className="bg-primary h-2 rounded-full transition-all"
+                                    style={{
+                                      width: `${((selectedEvent.tickets_sold || 0) / selectedEvent.ticket_quantity) * 100}%`,
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        selectedEvent.max_attendees && (
+                          <div className="flex items-start gap-3">
+                            <Users className="w-5 h-5 text-primary mt-0.5" />
+                            <div className="w-full">
+                              <p className="text-sm mb-2">
+                                {selectedEvent.max_attendees} max attendees
+                              </p>
+                            </div>
+                          </div>
+                        )
                       )}
                     </div>
 
                     <div className="flex gap-2">
                       <Button
                         className="flex-1 bg-primary hover:bg-primary/90 text-white"
-                        onClick={() => setRsvpDialogOpen(true)}
+                        onClick={handleActionButton}
                       >
-                        RSVP Now
+                        {selectedEvent.ticket_enabled ? (
+                          <>
+                            <Ticket className="w-4 h-4 mr-2" />
+                            Buy Tickets
+                          </>
+                        ) : (
+                          'RSVP Now'
+                        )}
                       </Button>
                       <Button
                         variant="outline"
@@ -392,84 +362,23 @@ export default function EventsPage() {
           </div>
         </div>
 
+        {/* Ticket Purchase Dialog */}
+        {selectedEvent && selectedEvent.ticket_enabled && (
+          <TicketPurchaseDialog
+            event={selectedEvent}
+            open={ticketDialogOpen}
+            onOpenChange={setTicketDialogOpen}
+          />
+        )}
+
         {/* RSVP Dialog */}
-        <Dialog open={rsvpDialogOpen} onOpenChange={setRsvpDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>RSVP for {selectedEvent?.title}</DialogTitle>
-              <DialogDescription>
-                {selectedEvent && moment(selectedEvent.start).format('MMMM D, YYYY [at] h:mm A')}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="Your full name"
-                  value={rsvpForm.name}
-                  onChange={(e) => setRsvpForm({ ...rsvpForm, name: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={rsvpForm.email}
-                  onChange={(e) => setRsvpForm({ ...rsvpForm, email: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (optional)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="(305) 555-0123"
-                  value={rsvpForm.phone}
-                  onChange={(e) => setRsvpForm({ ...rsvpForm, phone: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="attendees">Number of Attendees</Label>
-                <Input
-                  id="attendees"
-                  type="number"
-                  min="1"
-                  value={rsvpForm.attendees}
-                  onChange={(e) => setRsvpForm({ ...rsvpForm, attendees: parseInt(e.target.value) || 1 })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes (optional)</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Any special requests or notes..."
-                  value={rsvpForm.notes}
-                  onChange={(e) => setRsvpForm({ ...rsvpForm, notes: e.target.value })}
-                  rows={3}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setRsvpDialogOpen(false)}
-                disabled={submitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleRSVP}
-                disabled={submitting}
-                className="bg-primary hover:bg-primary/90 text-white"
-              >
-                {submitting ? 'Submitting...' : 'Submit RSVP'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {selectedEvent && !selectedEvent.ticket_enabled && (
+          <RSVPDialog
+            event={selectedEvent}
+            open={rsvpDialogOpen}
+            onOpenChange={setRsvpDialogOpen}
+          />
+        )}
 
         {/* Share Dialog */}
         <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>

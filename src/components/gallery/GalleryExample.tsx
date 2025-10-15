@@ -37,7 +37,7 @@ import {
   PhotoUploadZone,
 } from '@/components/gallery';
 import { useGalleryFilter } from '@/components/gallery/useGalleryFilter';
-import { AlbumWithStats, Photo, LightboxPhoto } from '@/types/gallery.types';
+import { AlbumWithStats, PhotoWithUrl, LightboxPhoto } from '@/types/gallery.types';
 
 // ============================================================================
 // EXAMPLE 1: Album Listing Page with Filtering
@@ -85,7 +85,7 @@ export function AlbumListingExample({ albums }: AlbumListingExampleProps) {
 
 interface AlbumDetailExampleProps {
   album: AlbumWithStats;
-  photos: Photo[];
+  photos: PhotoWithUrl[];
 }
 
 export function AlbumDetailExample({ album, photos }: AlbumDetailExampleProps) {
@@ -110,7 +110,7 @@ export function AlbumDetailExample({ album, photos }: AlbumDetailExampleProps) {
 
   // Handle photo click
   const handlePhotoClick = React.useCallback(
-    (_photo: Photo, index: number) => {
+    (_photo: PhotoWithUrl, index: number) => {
       open(index);
     },
     [open]
@@ -244,7 +244,7 @@ export function CombinedGalleryExample({
   photos,
 }: {
   albums: AlbumWithStats[];
-  photos: Photo[];
+  photos: PhotoWithUrl[];
 }) {
   const [view, setView] = React.useState<'albums' | 'photos'>('albums');
 

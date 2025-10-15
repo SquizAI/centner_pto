@@ -291,7 +291,7 @@ function ConnectionCard({
           variant="outline"
           size="sm"
           onClick={() => onSync(connection.id)}
-          disabled={loading[`sync-${connection.id}`] || isExpired}
+          disabled={!!loading[`sync-${connection.id}`] || !!isExpired}
         >
           <RefreshCw
             className={`h-4 w-4 mr-2 ${loading[`sync-${connection.id}`] ? 'animate-spin' : ''}`}
@@ -302,7 +302,7 @@ function ConnectionCard({
           variant="outline"
           size="sm"
           onClick={() => onDisconnect(connection.id)}
-          disabled={loading[connection.id]}
+          disabled={!!loading[connection.id]}
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Disconnect

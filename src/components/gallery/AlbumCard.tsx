@@ -23,7 +23,9 @@ interface AlbumCardProps {
 }
 
 export function AlbumCard({ album, className, priority = false }: AlbumCardProps) {
-  const campusConfig = GALLERY_CAMPUS_CONFIG[album.campus as GalleryCampus];
+  // Handle both old (array) and new (string) campus schema
+  const campusValue = Array.isArray(album.campus) ? album.campus[0] : album.campus;
+  const campusConfig = GALLERY_CAMPUS_CONFIG[(campusValue || 'all') as keyof typeof GALLERY_CAMPUS_CONFIG];
   const eventDate = album.event_date ? new Date(album.event_date) : null;
 
   return (

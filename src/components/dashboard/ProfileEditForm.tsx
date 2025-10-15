@@ -30,7 +30,7 @@ export default function ProfileEditForm({ profile }: ProfileEditFormProps) {
       const result = await updateProfile({
         fullName,
         phone: phone || undefined,
-        campus: profile.campus || undefined,
+        campus: (profile.campus as 'preschool' | 'elementary' | 'middle_high' | null) || undefined,
         studentGrades: profile.student_grades || undefined,
       })
 
