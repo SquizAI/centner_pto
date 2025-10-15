@@ -328,20 +328,13 @@ The website design is inspired by:
 
 | Category | Amount |
 |----------|--------|
-| **Development** (one-time) | $18,000 - $22,000 |
-| **Infrastructure** (annual) | $1,260 |
-| **Maintenance** (annual) | $3,000 - $4,000 |
-| **Transaction Fees** (variable) | ~$1,000 - $2,000 |
-| **Year 1 Total** | $23,260 - $29,260 |
+
 
 ### Year 2+ Costs
 
 | Category | Amount |
 |----------|--------|
-| **Infrastructure** (annual) | $1,260 |
-| **Maintenance** (annual) | $3,000 - $4,000 |
-| **Transaction Fees** (variable) | ~$1,000 - $2,000 |
-| **Annual Total** | $5,260 - $7,260 |
+
 
 See [Cost Breakdown](./docs/budget/COST_BREAKDOWN.md) for detailed analysis.
 
