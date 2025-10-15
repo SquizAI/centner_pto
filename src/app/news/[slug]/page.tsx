@@ -9,12 +9,6 @@ import { ArrowLeft } from 'lucide-react';
 // Revalidate every hour (3600 seconds)
 export const revalidate = 3600;
 
-interface PostPageProps {
-  params: {
-    slug: string;
-  };
-}
-
 // Fetch single post by slug
 async function getPostBySlug(slug: string): Promise<NewsPost | null> {
   const supabase = await createClient();
@@ -79,10 +73,12 @@ export async function generateStaticParams() {
 }
 
 // Generate dynamic metadata for SEO
-export async function generateMetadata({
-  params,
-}: PostPageProps): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const params = await props.params;
+  const { slug } = params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -120,8 +116,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostBySlug(params.slug);
+export default async function PostPage(props: {
+  params: Promise<{ slug: string }>;
+}) {
+  const params = await props.params;
+  const { slug } = params;
+  const post = await getPostBySlug(slug);
 
   // If post not found or not published, show 404
   if (!post) {
