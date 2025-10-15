@@ -58,7 +58,6 @@ export function VolunteerGrid({
         >
           <VolunteerCard
             opportunity={opportunity}
-            priority={index < 3} // Prioritize first 3 cards
             onSignUp={onSignUp}
           />
         </motion.div>

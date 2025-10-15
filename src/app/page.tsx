@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
-  Calendar, Heart, Users, Camera, Newspaper, HandHeart,
+  Calendar, Heart, Users, Newspaper, HandHeart,
   GraduationCap, Baby, BookOpen, Sparkles, TrendingUp,
   Gift, MessageCircle, Award, PartyPopper
 } from 'lucide-react'
@@ -128,7 +128,7 @@ export default function HomePage() {
           >
             <Badge className="mb-4 bg-secondary text-white">
               <TrendingUp className="w-4 h-4 mr-2" />
-              What's Happening
+              What&apos;s Happening
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Featured Events & News
@@ -213,7 +213,7 @@ export default function HomePage() {
                     </div>
                     <CardTitle className="text-lg">Fundraising Goals</CardTitle>
                     <CardDescription>
-                      We're 75% of the way to our goal!
+                      We&apos;re 75% of the way to our goal!
                     </CardDescription>
                   </CardHeader>
                 </Card>

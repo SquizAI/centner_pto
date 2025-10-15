@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Users, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
@@ -19,14 +18,12 @@ import {
 interface VolunteerCardProps {
   opportunity: OpportunityWithAvailability;
   className?: string;
-  priority?: boolean;
   onSignUp?: (opportunity: OpportunityWithAvailability) => void;
 }
 
 export function VolunteerCard({
   opportunity,
   className,
-  priority = false,
   onSignUp,
 }: VolunteerCardProps) {
   const campusConfig = VOLUNTEER_CAMPUS_CONFIG[opportunity.campus as VolunteerCampus];

@@ -126,7 +126,7 @@ export function NewsFilter({
               className="gap-1 cursor-pointer"
               onClick={() => onSearchChange('')}
             >
-              "{searchQuery}"
+              &quot;{searchQuery}&quot;
               <X className="h-3 w-3" aria-hidden="true" />
               <span className="sr-only">Clear search</span>
             </Badge>

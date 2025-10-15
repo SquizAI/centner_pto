@@ -6,8 +6,6 @@ import { VolunteerGrid, VolunteerFilter, SignupForm } from '@/components/volunte
 import {
   VolunteerOpportunity,
   VolunteerFilters,
-  VolunteerCampus,
-  DateFilter,
 } from '@/types/volunteer.types';
 import {
   filterOpportunitiesByDateRange,

@@ -20,7 +20,6 @@ import { cn } from '@/lib/utils';
 import {
   VOLUNTEER_CAMPUS_CONFIG,
   VolunteerCampus,
-  OpportunityWithAvailability,
 } from '@/types/volunteer.types';
 
 interface VolunteerShift {
@@ -112,7 +111,7 @@ export function MyVolunteerShifts({
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">No Upcoming Volunteer Shifts</h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              You haven't signed up for any volunteer opportunities yet. Browse available
+              You haven&apos;t signed up for any volunteer opportunities yet. Browse available
               opportunities and sign up to help support our school community!
             </p>
           </div>

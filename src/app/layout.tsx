@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/layout/header'
+import MobileNav from '@/components/layout/mobile-nav'
 import { Toaster } from 'sonner'
 
 const inter = Inter({
@@ -51,7 +52,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Header />
-        {children}
+        <main className="pb-16 md:pb-0">{children}</main>
+        <MobileNav />
         <Toaster position="top-right" richColors />
       </body>
     </html>

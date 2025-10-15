@@ -29,6 +29,7 @@ export function MyShiftsClientWrapper({ userId }: MyShiftsClientWrapperProps) {
 
   useEffect(() => {
     fetchUserShifts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchUserShifts = async () => {
@@ -54,6 +55,7 @@ export function MyShiftsClientWrapper({ userId }: MyShiftsClientWrapperProps) {
 
       // Transform the data to match the expected format
       const formattedShifts: VolunteerShift[] = (data || []).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (item: any) => ({
           id: item.signup_id,
           opportunity_id: item.opportunity_id,

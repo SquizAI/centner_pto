@@ -11,12 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 
 export default function AboutPage() {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  }
-
   const officers = [
     { title: 'President', name: 'Karina Maggioni', icon: '👑' },
     { title: 'Vice-President', name: 'Marica Morelli', icon: '🌟' },
@@ -70,11 +64,11 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-xl sm:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-              The Centner Academy Parent Teacher Organization (PTO) is a nonprofit organization dedicated to supporting the school's mission of providing a high-quality education to its students.
+              The Centner Academy Parent Teacher Organization (PTO) is a nonprofit organization dedicated to supporting the school&apos;s mission of providing a high-quality education to its students.
             </p>
 
             <p className="text-lg text-white/80 max-w-2xl mx-auto">
-              Our work is centered on enhancing the student experience and strengthening the school community. We are a group of parents committed to the health, well-being, and learning of the "whole child," helping to provide students with the experiences and skills they need to become lifelong learners and critical thinkers.
+              Our work is centered on enhancing the student experience and strengthening the school community. We are a group of parents committed to the health, well-being, and learning of the &quot;whole child,&quot; helping to provide students with the experiences and skills they need to become lifelong learners and critical thinkers.
             </p>
           </motion.div>
         </div>
@@ -147,7 +141,7 @@ export default function AboutPage() {
                 Our Role
               </Badge>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-                PTO's Role in Centner Academy
+                PTO&apos;s Role in Centner Academy
               </h2>
             </div>
 
@@ -361,7 +355,7 @@ export default function AboutPage() {
               Join Us in Making a Difference
             </h2>
             <p className="text-xl text-white/90 mb-10 leading-relaxed">
-              Whether you want to volunteer at events, join a committee, or support through donations, there's a place for you in our PTO community.
+              Whether you want to volunteer at events, join a committee, or support through donations, there&apos;s a place for you in our PTO community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-white hover:bg-white/90 text-accent shadow-2xl text-lg px-8 py-6 h-auto font-bold">

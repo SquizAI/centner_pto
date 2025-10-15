@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, momentLocalizer, View } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2, CheckCircle, AlertCircle, X } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -71,7 +71,7 @@ export default function EventsPage() {
 
       if (error) throw error
 
-      const formattedEvents: Event[] = (data || []).map((event: any) => ({
+      const formattedEvents: Event[] = (data || []).map((event) => ({
         id: event.id,
         title: event.title,
         description: event.description,
@@ -158,8 +158,6 @@ export default function EventsPage() {
     if (!selectedEvent) return
 
     const eventUrl = `${window.location.origin}/events/${selectedEvent.id}`
-    const title = encodeURIComponent(selectedEvent.title)
-    const description = encodeURIComponent(selectedEvent.description)
     const date = moment(selectedEvent.start).format('MMMM D, YYYY [at] h:mm A')
 
     if (platform === 'email') {

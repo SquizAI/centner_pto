@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { NewsFeatured, NewsGrid } from '@/components/news';
 import { NewsPost } from '@/types/news.types';
-import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'News & Updates | Centner Academy PTO',

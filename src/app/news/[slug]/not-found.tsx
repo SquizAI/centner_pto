@@ -15,7 +15,7 @@ export default function PostNotFound() {
         <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
 
         <p className="text-muted-foreground text-lg mb-8">
-          The news post you're looking for doesn't exist or may have been removed.
+          The news post you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
 
         <div className="flex gap-4 justify-center">
