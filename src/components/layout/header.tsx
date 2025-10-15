@@ -148,7 +148,7 @@ export default function Header() {
                   Store
                 </Button>
               </Link>
-              {/* {!isLoading && <UserMenu user={user} />} */}
+              {!isLoading && <UserMenu user={user} />}
               <Button
                 size="sm"
                 variant="ghost"
