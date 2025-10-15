@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  :root {
+    /* Centner Academy Actual Brand Colors - Vibrant & Playful */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+
+    /* Primary: Bright Blue - #23ABE3 */
+    --primary: 197 78% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Vibrant Pink - #EC4E88 */
+    --secondary: 339 80% 61%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent: Vibrant Orange - #FC6F24 */
+    --accent: 20 98% 57%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Additional Brand Colors */
+    --light-blue: 197 79% 63%; /* #57BAEB */
+    --teal-blue: 196 73% 53%; /* #2FABE0 */
+    --bright-green: 82 80% 44%; /* #8DC916 */
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 197 78% 52%;
+    --radius: 0.5rem;
+
+    /* Centner Campus Colors - Using Actual Brand Palette */
+    --preschool: 339 80% 61%; /* Pink */
+    --elementary: 197 79% 63%; /* Light Blue */
+    --middle-high: 20 98% 57%; /* Orange */
+  }
+
+  .dark {
+    /* Dark Mode - Centner Academy Colors */
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Keep vibrant colors in dark mode */
+    --primary: 197 78% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 339 80% 61%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 20 98% 57%;
+    --accent-foreground: 0 0% 100%;
+
+    --light-blue: 197 79% 63%;
+    --teal-blue: 196 73% 53%;
+    --bright-green: 82 80% 44%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 197 78% 52%;
+
+    /* Campus colors stay vibrant in dark mode */
+    --preschool: 339 80% 61%;
+    --elementary: 197 79% 63%;
+    --middle-high: 20 98% 57%;
+  }
+}
