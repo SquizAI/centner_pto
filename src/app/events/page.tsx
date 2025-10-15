@@ -195,7 +195,9 @@ export default function EventsPage() {
                         <CardTitle className="text-2xl mb-2">{selectedEvent.title}</CardTitle>
                         {selectedEvent.campus && (
                           <Badge className={`bg-[hsl(var(--${selectedEvent.campus}))] text-white`}>
-                            {selectedEvent.campus.charAt(0).toUpperCase() + selectedEvent.campus.slice(1)}
+                            {typeof selectedEvent.campus === 'string'
+                              ? selectedEvent.campus.charAt(0).toUpperCase() + selectedEvent.campus.slice(1)
+                              : selectedEvent.campus}
                           </Badge>
                         )}
                       </div>
