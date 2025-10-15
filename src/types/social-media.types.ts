@@ -2,11 +2,37 @@
  * Social Media Integration Types
  */
 
-import { Tables } from './database.types';
+// Database types (defined manually until migration is applied)
+export interface SocialMediaConnection {
+  id: string;
+  platform: 'instagram' | 'facebook';
+  account_id: string;
+  account_name: string;
+  account_username?: string;
+  access_token_encrypted: string;
+  refresh_token_encrypted?: string;
+  token_expires_at?: string;
+  is_active: boolean;
+  connected_at: string;
+  last_sync_at?: string;
+  last_error?: string;
+  metadata?: Record<string, any>;
+  created_by: string;
+}
 
-// Database types
-export type SocialMediaConnection = Tables<'social_media_connections'>;
-export type SocialMediaImport = Tables<'social_media_imports'>;
+export interface SocialMediaImport {
+  id: string;
+  connection_id: string;
+  album_id: string;
+  post_id: string;
+  platform: 'instagram' | 'facebook';
+  media_url: string;
+  imported_photo_id?: string;
+  import_status: 'pending' | 'completed' | 'failed';
+  error_message?: string;
+  imported_at?: string;
+  metadata?: Record<string, any>;
+}
 
 // Platform types
 export type SocialPlatform = 'instagram' | 'facebook';

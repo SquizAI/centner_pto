@@ -196,7 +196,7 @@ export function PhotoLightbox({
                 }}
               >
                 <Image
-                  src={currentPhoto.url}
+                  src={currentPhoto.url || '/placeholder-image.jpg'}
                   alt={currentPhoto.alt_text || currentPhoto.title || 'Photo'}
                   fill
                   className={cn(
