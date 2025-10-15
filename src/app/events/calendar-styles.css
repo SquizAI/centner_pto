@@ -1,0 +1,302 @@
+/* Mobile-First Calendar Styles */
+
+/* Base calendar container improvements */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+/* Toolbar - Mobile First */
+.rbc-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.rbc-toolbar-label {
+  order: 1;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  color: hsl(var(--foreground));
+}
+
+.rbc-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.rbc-btn-group:first-child {
+  order: 2; /* Navigation buttons */
+}
+
+.rbc-btn-group:last-child {
+  order: 3; /* View buttons */
+  flex-wrap: wrap;
+}
+
+/* Toolbar buttons */
+.rbc-toolbar button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.rbc-toolbar button:hover {
+  background: hsl(var(--accent));
+  border-color: hsl(var(--primary));
+}
+
+.rbc-toolbar button:active,
+.rbc-toolbar button.rbc-active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+/* Month view - Mobile optimizations */
+.rbc-month-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.rbc-header {
+  padding: 0.5rem 0.25rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+.rbc-month-row {
+  border-top: 1px solid hsl(var(--border));
+  min-height: 60px;
+}
+
+.rbc-date-cell {
+  padding: 0.25rem;
+  text-align: right;
+}
+
+.rbc-date-cell > a {
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+}
+
+.rbc-off-range {
+  color: hsl(var(--muted-foreground));
+}
+
+.rbc-today {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+.rbc-date-cell.rbc-now {
+  font-weight: 700;
+}
+
+.rbc-date-cell.rbc-now > a {
+  color: hsl(var(--primary));
+}
+
+/* Events in month view - Mobile optimized */
+.rbc-event {
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+
+.rbc-event-label {
+  font-size: 0.7rem;
+}
+
+.rbc-event-content {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Week and Day views */
+.rbc-time-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.rbc-time-header {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.rbc-time-content {
+  border-top: 1px solid hsl(var(--border));
+}
+
+.rbc-time-slot {
+  min-height: 40px;
+}
+
+.rbc-time-header-content {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* Agenda view - Mobile optimized */
+.rbc-agenda-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.rbc-agenda-view table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell,
+.rbc-agenda-event-cell {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  font-size: 0.875rem;
+}
+
+.rbc-agenda-date-cell {
+  font-weight: 600;
+  white-space: nowrap;
+  width: 80px;
+}
+
+.rbc-agenda-time-cell {
+  white-space: nowrap;
+  width: 100px;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.rbc-agenda-event-cell {
+  width: auto;
+}
+
+/* Tablet breakpoint */
+@media (min-width: 640px) {
+  .rbc-toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rbc-toolbar-label {
+    order: 0;
+    font-size: 1.25rem;
+    flex: 1;
+    text-align: center;
+  }
+
+  .rbc-btn-group:first-child {
+    order: 0;
+  }
+
+  .rbc-btn-group:last-child {
+    order: 0;
+  }
+
+  .rbc-header {
+    font-size: 0.875rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .rbc-month-row {
+    min-height: 80px;
+  }
+
+  .rbc-event {
+    font-size: 0.8125rem;
+    padding: 3px 6px;
+  }
+
+  .rbc-date-cell > a {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop breakpoint */
+@media (min-width: 1024px) {
+  .rbc-toolbar button {
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .rbc-month-row {
+    min-height: 100px;
+  }
+
+  .rbc-event {
+    font-size: 0.875rem;
+  }
+
+  .rbc-header {
+    padding: 1rem 0.5rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Popup improvements */
+.rbc-overlay {
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background: hsl(var(--background));
+  max-width: 300px;
+}
+
+.rbc-overlay-header {
+  padding: 0.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 0.5rem;
+}
+
+/* Accessibility improvements */
+.rbc-toolbar button:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+.rbc-event:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Loading and empty states */
+.rbc-show-more {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.rbc-show-more:hover {
+  background-color: hsl(var(--muted) / 0.8);
+}

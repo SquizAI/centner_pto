@@ -4,6 +4,15 @@ import { Tables } from './database.types';
 export type PhotoAlbum = Tables<'photo_albums'>;
 export type Photo = Tables<'photos'>;
 
+// Extended photo type with computed fields for display
+export interface PhotoWithUrl extends Photo {
+  url?: string;
+  title?: string | null;
+  alt_text?: string | null;
+  width?: number | null;
+  height?: number | null;
+}
+
 // Campus type for gallery
 export type GalleryCampus = 'all' | 'preschool' | 'elementary' | 'middle-high';
 

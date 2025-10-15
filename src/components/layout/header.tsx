@@ -4,10 +4,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Heart, ShoppingBag, Menu, X, Camera, Info } from 'lucide-react'
+import { Heart, ShoppingBag, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+// import { createClient } from '@/lib/supabase/client'
+// import UserMenu, { type Profile } from '@/components/auth/UserMenu'
 
 const desktopNavItems = [
   { label: 'Home', href: '/' },
@@ -22,6 +24,57 @@ const desktopNavItems = [
 export default function Header() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // const [user, setUser] = useState<{ email: string; profile: Profile } | null>(null)
+  // const [isLoading, setIsLoading] = useState(true)
+
+  // useEffect(() => {
+  //   const supabase = createClient()
+
+  //   // Get initial user
+  //   const getUser = async () => {
+  //     const {
+  //       data: { user: authUser },
+  //     } = await supabase.auth.getUser()
+
+  //     if (authUser) {
+  //       const { data: profile } = await supabase
+  //         .from('profiles')
+  //         .select('*')
+  //         .eq('id', authUser.id)
+  //         .single()
+
+  //       if (profile) {
+  //         setUser({ email: authUser.email!, profile })
+  //       }
+  //     }
+  //     setIsLoading(false)
+  //   }
+
+  //   getUser()
+
+  //   // Listen for auth changes
+  //   const {
+  //     data: { subscription },
+  //   } = supabase.auth.onAuthStateChange(async (event, session) => {
+  //     if (session?.user) {
+  //       const { data: profile } = await supabase
+  //         .from('profiles')
+  //         .select('*')
+  //         .eq('id', session.user.id)
+  //         .single()
+
+  //       if (profile) {
+  //         setUser({ email: session.user.email!, profile })
+  //       }
+  //     } else {
+  //       setUser(null)
+  //     }
+  //   })
+
+  //   return () => {
+  //     subscription.unsubscribe()
+  //   }
+  // }, [])
 
   return (
     <>
@@ -95,6 +148,7 @@ export default function Header() {
                   Store
                 </Button>
               </Link>
+              {/* {!isLoading && <UserMenu user={user} />} */}
               <Button
                 size="sm"
                 variant="ghost"

@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { Calendar, momentLocalizer, View } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import './calendar-styles.css'
 import { motion } from 'framer-motion'
 import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2 } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -28,11 +30,13 @@ interface Event {
   campus?: string
   max_attendees?: number
   rsvp_count?: number
+  image_url?: string
 }
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [view, setView] = useState<View>('month')
+  const [date, setDate] = useState(new Date())
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [rsvpDialogOpen, setRsvpDialogOpen] = useState(false)
@@ -64,7 +68,8 @@ export default function EventsPage() {
           location,
           campus,
           max_attendees,
-          current_attendees
+          current_attendees,
+          image_url
         `)
         .eq('status', 'published')
         .order('event_date', { ascending: true })
@@ -81,6 +86,7 @@ export default function EventsPage() {
         campus: event.campus?.[0] || 'all',
         max_attendees: event.max_attendees,
         rsvp_count: event.current_attendees || 0,
+        image_url: event.image_url,
       }))
 
       setEvents(formattedEvents)
@@ -191,15 +197,15 @@ export default function EventsPage() {
           <div className="lg:col-span-2">
             <Card className="shadow-xl border-0">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <CardTitle className="text-2xl">Calendar</CardTitle>
-                    <CardDescription>View events by month, week, or day</CardDescription>
+                    <CardTitle className="text-xl sm:text-2xl">Calendar</CardTitle>
+                    <CardDescription className="text-sm">View events by month, week, or day</CardDescription>
                   </div>
-                  <div className="flex gap-2">
-                    <Badge className="bg-[hsl(var(--preschool))] text-white">Preschool</Badge>
-                    <Badge className="bg-[hsl(var(--elementary))] text-white">Elementary</Badge>
-                    <Badge className="bg-[hsl(var(--middle-high))] text-white">Middle/High</Badge>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-[hsl(var(--preschool))] text-white text-xs">Preschool</Badge>
+                    <Badge className="bg-[hsl(var(--elementary))] text-white text-xs">Elementary</Badge>
+                    <Badge className="bg-[hsl(var(--middle-high))] text-white text-xs">Middle/High</Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -212,18 +218,24 @@ export default function EventsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-[600px]">
+                  <div className="h-[500px] sm:h-[550px] lg:h-[650px]">
                     <Calendar
                       localizer={localizer}
                       events={events}
                       startAccessor="start"
                       endAccessor="end"
                       view={view}
+                      date={date}
                       onView={(newView) => setView(newView)}
+                      onNavigate={(newDate) => setDate(newDate)}
                       onSelectEvent={handleSelectEvent}
                       eventPropGetter={eventStyleGetter}
                       style={{ height: '100%' }}
                       popup
+                      toolbar
+                      views={['month', 'week', 'day', 'agenda']}
+                      step={30}
+                      showMultiDayTimes
                     />
                   </div>
                 )}
@@ -256,6 +268,17 @@ export default function EventsPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    {selectedEvent.image_url && (
+                      <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                        <Image
+                          src={selectedEvent.image_url}
+                          alt={selectedEvent.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
+                    )}
                     <p className="text-muted-foreground">{selectedEvent.description}</p>
 
                     <div className="space-y-3">

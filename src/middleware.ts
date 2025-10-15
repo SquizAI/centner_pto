@@ -32,12 +32,39 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
+  const path = request.nextUrl.pathname
+
+  // Protected route patterns
+  const protectedRoutes = ['/dashboard', '/admin']
+  const adminRoutes = ['/admin', '/gallery/admin', '/volunteer/admin', '/news/admin', '/events/admin']
+
+  // Check if route requires authentication
+  const requiresAuth = protectedRoutes.some((route) => path.startsWith(route))
+
+  // Check if route requires admin
+  const requiresAdmin = adminRoutes.some((route) => path.startsWith(route))
+
+  // Redirect unauthenticated users to login
+  if (requiresAuth && !user) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
-    redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+    redirectUrl.searchParams.set('redirectTo', path)
     return NextResponse.redirect(redirectUrl)
+  }
+
+  // Check admin role for admin routes
+  if (requiresAdmin && user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = '/'
+      return NextResponse.redirect(redirectUrl)
+    }
   }
 
   return supabaseResponse
