@@ -60,6 +60,11 @@ const recurringEventSchema = z.object({
   }),
 })
 
+const rsvpSchema = z.object({
+  guests_count: z.number().int().min(1, 'At least 1 guest required').default(1),
+  notes: z.string().optional(),
+})
+
 // =====================================================
 // HELPER FUNCTIONS
 // =====================================================
@@ -640,6 +645,160 @@ export async function createRecurringEvents(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to create recurring events',
+    }
+  }
+}
+
+// =====================================================
+// RSVP ACTIONS
+// =====================================================
+
+/**
+ * Create an RSVP for an event
+ * Requires authentication
+ */
+export async function createRSVP(
+  eventId: string,
+  data: z.infer<typeof rsvpSchema>
+): Promise<ActionResult> {
+  try {
+    // Validate input
+    const validated = rsvpSchema.parse(data)
+
+    // Require authentication
+    const { supabase, user } = await requireAuth()
+
+    // Validate UUID
+    if (!eventId || !eventId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      return {
+        success: false,
+        error: 'Invalid event ID',
+      }
+    }
+
+    // Check if user already has an RSVP for this event
+    const { data: existingRsvp } = await supabase
+      .from('event_rsvps')
+      .select('id')
+      .eq('event_id', eventId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (existingRsvp) {
+      return {
+        success: false,
+        error: 'You have already RSVP\'d to this event',
+      }
+    }
+
+    // Create RSVP
+    const { data: rsvp, error } = await supabase
+      .from('event_rsvps')
+      .insert({
+        event_id: eventId,
+        user_id: user.id,
+        guests_count: validated.guests_count,
+        notes: validated.notes,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      return {
+        success: false,
+        error: `Failed to create RSVP: ${error.message}`,
+      }
+    }
+
+    revalidatePath('/events')
+    revalidatePath('/calendar')
+    revalidatePath(`/events/${eventId}`)
+    revalidatePath(`/calendar/${eventId}`)
+
+    return {
+      success: true,
+      message: 'RSVP created successfully',
+      data: rsvp,
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.errors[0].message,
+      }
+    }
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create RSVP',
+    }
+  }
+}
+
+/**
+ * Cancel an RSVP
+ * Requires authentication
+ */
+export async function cancelRSVP(rsvpId: string): Promise<ActionResult> {
+  try {
+    // Require authentication
+    const { supabase, user } = await requireAuth()
+
+    // Validate UUID
+    if (!rsvpId || !rsvpId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      return {
+        success: false,
+        error: 'Invalid RSVP ID',
+      }
+    }
+
+    // Verify ownership before deleting
+    const { data: rsvp, error: fetchError } = await supabase
+      .from('event_rsvps')
+      .select('user_id, event_id')
+      .eq('id', rsvpId)
+      .single()
+
+    if (fetchError || !rsvp) {
+      return {
+        success: false,
+        error: 'RSVP not found',
+      }
+    }
+
+    if (rsvp.user_id !== user.id) {
+      return {
+        success: false,
+        error: 'You can only cancel your own RSVPs',
+      }
+    }
+
+    // Delete RSVP
+    const { error } = await supabase
+      .from('event_rsvps')
+      .delete()
+      .eq('id', rsvpId)
+
+    if (error) {
+      return {
+        success: false,
+        error: `Failed to cancel RSVP: ${error.message}`,
+      }
+    }
+
+    revalidatePath('/events')
+    revalidatePath('/calendar')
+    revalidatePath(`/events/${rsvp.event_id}`)
+    revalidatePath(`/calendar/${rsvp.event_id}`)
+
+    return {
+      success: true,
+      message: 'RSVP cancelled successfully',
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to cancel RSVP',
     }
   }
 }

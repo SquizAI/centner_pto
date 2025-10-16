@@ -147,29 +147,34 @@ export const EVENT_CAMPUS_CONFIG: Record<EventCampus, {
   color: string;
   bgColor: string;
   textColor: string;
+  borderColor: string;
 }> = {
   all: {
     label: 'All Campuses',
     color: 'hsl(var(--primary))',
     bgColor: 'bg-[hsl(var(--primary))]/10',
     textColor: 'text-[hsl(var(--primary))]',
+    borderColor: 'border-[hsl(var(--primary))]/20',
   },
   preschool: {
     label: 'Preschool',
     color: 'hsl(var(--preschool))',
     bgColor: 'bg-[hsl(var(--preschool))]/10',
     textColor: 'text-[hsl(var(--preschool))]',
+    borderColor: 'border-[hsl(var(--preschool))]/20',
   },
   elementary: {
     label: 'Elementary',
     color: 'hsl(var(--elementary))',
     bgColor: 'bg-[hsl(var(--elementary))]/10',
     textColor: 'text-[hsl(var(--elementary))]',
+    borderColor: 'border-[hsl(var(--elementary))]/20',
   },
   middle_high: {
     label: 'Middle & High School',
     color: 'hsl(var(--middle-high))',
     bgColor: 'bg-[hsl(var(--middle-high))]/10',
     textColor: 'text-[hsl(var(--middle-high))]',
+    borderColor: 'border-[hsl(var(--middle-high))]/20',
   },
 };

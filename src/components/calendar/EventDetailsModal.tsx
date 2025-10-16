@@ -318,7 +318,7 @@ export function EventDetailsModal({
             {!isPast && !isCancelled && !hasShifts && (
               <Button
                 onClick={() => onSignUp && onSignUp(event)}
-                disabled={isFull}
+                disabled={!!isFull}
                 size="lg"
                 className="sm:w-auto font-semibold"
               >

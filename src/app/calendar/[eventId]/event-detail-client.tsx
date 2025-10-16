@@ -91,7 +91,7 @@ export function EventDetailClient({
     } else {
       toast.success('RSVP successful!')
       setShowRsvpDialog(false)
-      setUserRsvp(result.rsvp!)
+      setUserRsvp(result.data!)
       router.refresh()
     }
     setIsSubmitting(false)

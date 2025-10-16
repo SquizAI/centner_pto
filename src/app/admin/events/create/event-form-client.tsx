@@ -22,7 +22,7 @@ export function EventFormClient() {
     event_date: '',
     end_date: '',
     location: '',
-    campus: 'all',
+    campus: 'all' as 'preschool' | 'elementary' | 'middle-high' | 'all',
     image_url: '',
     max_attendees: '',
     event_type: '',
@@ -43,6 +43,7 @@ export function EventFormClient() {
       image_url: formData.image_url || undefined,
       max_attendees: formData.max_attendees ? parseInt(formData.max_attendees) : undefined,
       status: asDraft ? 'draft' as const : formData.status,
+      rsvp_required: false,
     }
 
     const result = await createEvent(eventData)

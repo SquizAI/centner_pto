@@ -241,7 +241,7 @@ export function EventCard({
           {!isPast && !isCancelled && (
             <Button
               onClick={handleSignUpClick}
-              disabled={isFull}
+              disabled={!!isFull}
               className={cn(
                 'flex-1 font-semibold transition-all',
                 isFull && 'cursor-not-allowed opacity-50'
