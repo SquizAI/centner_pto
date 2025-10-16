@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-
-// Initialize Supabase client with service role for storage upload
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Disable Edge Runtime to support Node.js APIs
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,13 +16,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for API key
+    // Check for required environment variables
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: 'Gemini API key not configured' },
         { status: 500 }
       );
     }
+
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: 'Supabase configuration missing' },
+        { status: 500 }
+      );
+    }
+
+    // Initialize clients inside the function to avoid build-time errors
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
     console.log('Generating image with prompt:', prompt);
 
