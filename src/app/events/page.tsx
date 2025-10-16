@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { Calendar, momentLocalizer, View } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendar-styles.css'
 import { motion } from 'framer-motion'
-import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2, Ticket, DollarSign } from 'lucide-react'
+import { Calendar as CalendarIcon, MapPin, Users, Clock, Share2, Ticket, DollarSign, Eye } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,6 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Event as EventType } from '@/types/events'
 import TicketPurchaseDialog from '@/components/events/TicketPurchaseDialog'
 import RSVPDialog from '@/components/events/RSVPDialog'
+import EventFilters, { EventFiltersState } from '@/components/events/EventFilters'
 import { toast } from 'sonner'
 
 const localizer = momentLocalizer(moment)
@@ -23,10 +25,13 @@ const localizer = momentLocalizer(moment)
 interface CalendarEvent extends EventType {
   start: Date
   end: Date
+  eventType?: string
 }
 
 export default function EventsPage() {
+  const router = useRouter()
   const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([])
   const [view, setView] = useState<View>('month')
   const [date, setDate] = useState(new Date())
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
@@ -34,10 +39,19 @@ export default function EventsPage() {
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false)
   const [rsvpDialogOpen, setRsvpDialogOpen] = useState(false)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
+  const [filters, setFilters] = useState<EventFiltersState>({
+    campus: 'all',
+    eventType: 'all',
+    month: 'all',
+  })
 
   useEffect(() => {
     loadEvents()
   }, [])
+
+  useEffect(() => {
+    applyFilters()
+  }, [events, filters])
 
   async function loadEvents() {
     try {
@@ -54,6 +68,13 @@ export default function EventsPage() {
         ...event,
         start: new Date(event.event_date),
         end: new Date(event.end_date || event.event_date),
+        eventType: event.description?.toLowerCase().includes('fundraiser')
+          ? 'fundraiser'
+          : event.description?.toLowerCase().includes('meeting')
+          ? 'meeting'
+          : event.description?.toLowerCase().includes('volunteer')
+          ? 'volunteer'
+          : 'student-event',
       }))
 
       setEvents(formattedEvents)
@@ -62,6 +83,32 @@ export default function EventsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function applyFilters() {
+    let filtered = [...events]
+
+    // Filter by campus
+    if (filters.campus !== 'all') {
+      filtered = filtered.filter(
+        (event) => event.campus === filters.campus || event.campus === 'all'
+      )
+    }
+
+    // Filter by event type
+    if (filters.eventType !== 'all') {
+      filtered = filtered.filter((event) => event.eventType === filters.eventType)
+    }
+
+    // Filter by month
+    if (filters.month !== 'all') {
+      const monthIndex = parseInt(filters.month)
+      filtered = filtered.filter(
+        (event) => event.start.getMonth() === monthIndex
+      )
+    }
+
+    setFilteredEvents(filtered)
   }
 
   // Memoize event style getter to prevent recalculation on every render
@@ -85,8 +132,9 @@ export default function EventsPage() {
   }, [])
 
   const handleSelectEvent = useCallback((event: CalendarEvent) => {
-    setSelectedEvent(event)
-  }, [])
+    // Navigate to event detail page
+    router.push(`/events/${event.id}`)
+  }, [router])
 
   const handleActionButton = useCallback(() => {
     if (!selectedEvent) return
@@ -121,7 +169,15 @@ export default function EventsPage() {
   }, [selectedEvent])
 
   // Memoize upcoming events to prevent unnecessary recalculations
-  const upcomingEvents = useMemo(() => events.slice(0, 5), [events])
+  const upcomingEvents = useMemo(() => filteredEvents.slice(0, 5), [filteredEvents])
+
+  const handleViewEvent = (event: CalendarEvent) => {
+    router.push(`/events/${event.id}`)
+  }
+
+  const handleQuickPreview = (event: CalendarEvent) => {
+    setSelectedEvent(event)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +189,22 @@ export default function EventsPage() {
             <p className="text-muted-foreground">Upcoming events across all campuses</p>
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Filters Sidebar */}
+          <div className="lg:col-span-1">
+            <Card className="shadow-xl border-0 sticky top-8">
+              <CardHeader>
+                <CardTitle className="text-xl">Filters</CardTitle>
+                <CardDescription>
+                  {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''} found
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <EventFilters filters={filters} onFiltersChange={setFilters} />
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Calendar View */}
           <div className="lg:col-span-2">
             <Card className="shadow-xl border-0">
@@ -162,7 +233,7 @@ export default function EventsPage() {
                   <div className="h-[500px] sm:h-[550px] lg:h-[650px]">
                     <Calendar
                       localizer={localizer}
-                      events={events}
+                      events={filteredEvents}
                       startAccessor="start"
                       endAccessor="end"
                       view={view}
@@ -185,7 +256,7 @@ export default function EventsPage() {
           </div>
 
           {/* Event Details / Upcoming Events */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-1">
             {selectedEvent ? (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -332,13 +403,15 @@ export default function EventsPage() {
                       <motion.div
                         key={event.id}
                         whileHover={{ scale: 1.02 }}
-                        className="p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer"
-                        onClick={() => setSelectedEvent(event)}
+                        className="p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer group"
+                        onClick={() => handleViewEvent(event)}
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold">{event.title}</h4>
+                          <h4 className="font-semibold group-hover:text-primary transition-colors">
+                            {event.title}
+                          </h4>
                           {event.campus && (
-                            <Badge className={`bg-[hsl(var(--${event.campus}))] text-white text-xs`}>
+                            <Badge className={`bg-[hsl(var(--${event.campus}))] text-white text-xs flex-shrink-0`}>
                               {event.campus}
                             </Badge>
                           )}
@@ -347,15 +420,19 @@ export default function EventsPage() {
                           {moment(event.start).format('MMM D, YYYY • h:mm A')}
                         </p>
                         {event.location && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
                             <MapPin className="w-3 h-3" />
                             {event.location}
                           </p>
                         )}
+                        <div className="flex items-center text-xs text-primary group-hover:underline">
+                          <Eye className="w-3 h-3 mr-1" />
+                          View Details
+                        </div>
                       </motion.div>
                     ))}
 
-                    {events.length === 0 && (
+                    {filteredEvents.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
                         <CalendarIcon className="w-12 h-12 mx-auto mb-3 opacity-20" />
                         <p>No upcoming events</p>

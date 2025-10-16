@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,18 +9,21 @@ import { Textarea } from '@/components/ui/textarea'
 import { Loader2, UserCheck, AlertCircle } from 'lucide-react'
 import { Event } from '@/types/events'
 import { createClient } from '@/lib/supabase/client'
+import { createRSVP } from '@/app/actions/rsvp-actions'
 import { toast } from 'sonner'
 
 interface RSVPDialogProps {
   event: Event
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSuccess?: () => void
 }
 
 export default function RSVPDialog({
   event,
   open,
   onOpenChange,
+  onSuccess,
 }: RSVPDialogProps) {
   const [parentName, setParentName] = useState('')
   const [parentEmail, setParentEmail] = useState('')
@@ -30,17 +33,39 @@ export default function RSVPDialog({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Auto-fill user data if authenticated
+  useEffect(() => {
+    async function loadUserData() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          setParentName(profile.full_name || '')
+          setParentEmail(profile.email || user.email || '')
+        } else {
+          setParentEmail(user.email || '')
+        }
+      }
+    }
+
+    if (open) {
+      loadUserData()
+    }
+  }, [open])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
     try {
-      const supabase = createClient()
-
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser()
-
       // Validate fields
       if (!parentName || !parentEmail) {
         setError('Please fill in all required fields')
@@ -48,79 +73,37 @@ export default function RSVPDialog({
         return
       }
 
-      // Check event capacity
-      if (event.max_attendees) {
-        const { count } = await supabase
-          .from('event_rsvps')
-          .select('*', { count: 'exact', head: true })
-          .eq('event_id', event.id)
-
-        const totalGuests = numAdults + numChildren
-        const currentAttendees = count || 0
-
-        if (currentAttendees + totalGuests > event.max_attendees) {
-          setError('This event has reached maximum capacity')
-          setLoading(false)
-          return
-        }
+      if (numAdults + numChildren < 1) {
+        setError('At least one guest is required')
+        setLoading(false)
+        return
       }
 
-      // Check for existing RSVP
-      if (user) {
-        const { data: existingRSVP } = await supabase
-          .from('event_rsvps')
-          .select('id')
-          .eq('event_id', event.id)
-          .eq('user_id', user.id)
-          .single()
+      // Call server action
+      const result = await createRSVP({
+        event_id: event.id,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        num_adults: numAdults,
+        num_children: numChildren,
+        notes: notes || null,
+      })
 
-        if (existingRSVP) {
-          setError('You have already RSVP\'d for this event')
-          setLoading(false)
-          return
-        }
+      if (result.success) {
+        toast.success('RSVP submitted successfully!')
+        onOpenChange(false)
+        onSuccess?.()
+
+        // Reset form
+        setParentName('')
+        setParentEmail('')
+        setNumAdults(1)
+        setNumChildren(0)
+        setNotes('')
       } else {
-        // For non-authenticated users, check by email
-        const { data: existingRSVP } = await supabase
-          .from('event_rsvps')
-          .select('id')
-          .eq('event_id', event.id)
-          .eq('parent_email', parentEmail)
-          .single()
-
-        if (existingRSVP) {
-          setError('An RSVP with this email already exists for this event')
-          setLoading(false)
-          return
-        }
+        setError(result.error || 'Failed to submit RSVP')
+        toast.error(result.error || 'Failed to submit RSVP')
       }
-
-      // Create RSVP
-      const { error: insertError } = await supabase
-        .from('event_rsvps')
-        .insert({
-          event_id: event.id,
-          user_id: user?.id || null,
-          parent_name: parentName,
-          parent_email: parentEmail,
-          num_adults: numAdults,
-          num_children: numChildren,
-          notes,
-        })
-
-      if (insertError) {
-        throw insertError
-      }
-
-      toast.success('RSVP submitted successfully!')
-      onOpenChange(false)
-
-      // Reset form
-      setParentName('')
-      setParentEmail('')
-      setNumAdults(1)
-      setNumChildren(0)
-      setNotes('')
     } catch (err) {
       console.error('RSVP error:', err)
       setError(err instanceof Error ? err.message : 'Failed to submit RSVP')

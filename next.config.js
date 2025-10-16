@@ -27,6 +27,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.crunchbase.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.shopify.com',
+      },
     ],
   },
   compiler: {

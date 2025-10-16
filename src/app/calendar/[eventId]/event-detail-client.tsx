@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Calendar, MapPin, Users, Clock, Share2, Download, CheckCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { createRSVP, cancelRSVP } from '@/app/actions/event-actions'
+import { createRSVP, deleteRSVP } from '@/app/actions/rsvp-actions'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
@@ -81,8 +81,12 @@ export function EventDetailClient({
     }
 
     setIsSubmitting(true)
-    const result = await createRSVP(event.id, {
-      guests_count: guestsCount,
+    const result = await createRSVP({
+      event_id: event.id,
+      parent_name: 'User', // This should come from profile
+      parent_email: 'user@example.com', // This should come from profile
+      num_adults: guestsCount,
+      num_children: 0,
       notes,
     })
 
@@ -91,7 +95,6 @@ export function EventDetailClient({
     } else {
       toast.success('RSVP successful!')
       setShowRsvpDialog(false)
-      setUserRsvp(result.data!)
       router.refresh()
     }
     setIsSubmitting(false)
@@ -101,7 +104,7 @@ export function EventDetailClient({
     if (!userRsvp) return
 
     setIsSubmitting(true)
-    const result = await cancelRSVP(userRsvp.id)
+    const result = await deleteRSVP(userRsvp.id)
 
     if (result.error) {
       toast.error(result.error)

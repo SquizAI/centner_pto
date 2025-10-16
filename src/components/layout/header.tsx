@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import UserMenu, { type Profile } from '@/components/auth/UserMenu'
+import CartButton from '@/components/store/CartButton'
 
 const desktopNavItems = [
   { label: 'Home', href: '/' },
@@ -147,6 +148,9 @@ export default function Header() {
                   Store
                 </Button>
               </Link>
+              <div className="hidden md:block">
+                <CartButton />
+              </div>
               {!isLoading && <UserMenu user={user} />}
               <Button
                 variant="ghost"

@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Shield,
   LayoutDashboard,
+  Share2,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -123,6 +124,13 @@ export default async function AdminPage() {
       href: '/events/admin',
       icon: Calendar,
       color: 'bg-purple-100 text-purple-700',
+    },
+    {
+      title: 'Social Media',
+      description: 'Connect Instagram & Facebook accounts',
+      href: '/admin/social-media',
+      icon: Share2,
+      color: 'bg-blue-100 text-blue-700',
     },
   ]
 

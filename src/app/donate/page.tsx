@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
-import { Heart, DollarSign, Users, Sparkles } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Heart, Users, Sparkles, GraduationCap, Palette, Bus, Trophy, Rocket } from 'lucide-react'
+import DonationForm from '@/components/donations/DonationForm'
 
 export const metadata: Metadata = {
   title: 'Donate',
@@ -12,6 +12,7 @@ export default function DonatePage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
+          {/* Hero Section */}
           <div className="text-center mb-12">
             <div className="mb-8 flex justify-center">
               <div className="relative">
@@ -31,39 +32,79 @@ export default function DonatePage() {
             </p>
           </div>
 
-          <div className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-8 md:p-12 mb-8">
-            <DollarSign className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 text-center">Donation System Coming Soon</h2>
-            <p className="text-gray-500 text-center mb-8 max-w-md mx-auto">
-              We are setting up a secure donation system to make it easy for you to support our PTO. Check back soon to contribute!
-            </p>
+          {/* Impact Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+              Your Impact
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-6 rounded-xl border border-blue-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Rocket className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">STEM Programs</h3>
+                <p className="text-sm text-gray-600">
+                  Fund robotics, coding, and science labs that inspire future innovators
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-xl border border-purple-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Palette className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">Arts & Music</h3>
+                <p className="text-sm text-gray-600">
+                  Support art supplies, musical instruments, and creative expression
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-50 to-green-100/50 p-6 rounded-xl border border-green-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Bus className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">Field Trips</h3>
+                <p className="text-sm text-gray-600">
+                  Enable educational adventures and real-world learning experiences
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 p-6 rounded-xl border border-orange-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <GraduationCap className="h-6 w-6 text-orange-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">Teacher Support</h3>
+                <p className="text-sm text-gray-600">
+                  Provide classroom supplies and professional development resources
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-50 to-pink-100/50 p-6 rounded-xl border border-pink-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Trophy className="h-6 w-6 text-pink-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">Playground</h3>
+                <p className="text-sm text-gray-600">
+                  Upgrade play equipment and create safe, fun outdoor spaces
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 p-6 rounded-xl border border-indigo-200">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Users className="h-6 w-6 text-indigo-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">Community Events</h3>
+                <p className="text-sm text-gray-600">
+                  Host family gatherings, celebrations, and community-building activities
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-xl text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                <Sparkles className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-gray-700 mb-2">Student Programs</h3>
-              <p className="text-sm text-gray-500">Fund enrichment activities and educational programs</p>
-            </div>
-            <div className="bg-gradient-to-br from-accent/10 to-accent/5 p-6 rounded-xl text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                <Users className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="font-semibold text-gray-700 mb-2">Community Events</h3>
-              <p className="text-sm text-gray-500">Support family events and community gatherings</p>
-            </div>
-            <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 p-6 rounded-xl text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                <Heart className="h-6 w-6 text-secondary" fill="currentColor" />
-              </div>
-              <h3 className="font-semibold text-gray-700 mb-2">Teacher Support</h3>
-              <p className="text-sm text-gray-500">Provide resources and supplies for classrooms</p>
-            </div>
-          </div>
+          {/* Donation Form */}
+          <DonationForm />
 
-          <div className="bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-xl p-6 md:p-8 text-center">
+          {/* Trust Badges */}
+          <div className="mt-12 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-xl p-6 md:p-8 text-center">
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Every Contribution Matters</h3>
             <p className="text-gray-600 mb-6 max-w-xl mx-auto">
               Whether big or small, every donation helps us create memorable experiences and support our amazing students and teachers.
@@ -72,6 +113,7 @@ export default function DonatePage() {
               <span className="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Tax Deductible</span>
               <span className="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">100% Goes to PTO</span>
               <span className="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Secure Payments</span>
+              <span className="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Powered by Stripe</span>
             </div>
           </div>
         </div>

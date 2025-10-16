@@ -59,34 +59,38 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Extract metadata
-        const ticketRecordId = session.metadata?.ticket_record_id
-        const eventId = session.metadata?.event_id
+        // Check if this is a donation or ticket purchase
+        if (session.metadata?.type === 'donation') {
+          await handleDonationCheckout(session, supabase)
+        } else {
+          // Handle ticket purchase
+          const ticketRecordId = session.metadata?.ticket_record_id
+          const eventId = session.metadata?.event_id
 
-        if (!ticketRecordId || !eventId) {
-          console.error('Missing metadata in checkout session')
-          break
+          if (!ticketRecordId || !eventId) {
+            console.error('Missing metadata in checkout session')
+            break
+          }
+
+          // Update ticket record to paid status
+          const { error: updateError } = await supabase
+            .from('event_tickets')
+            .update({
+              status: 'paid',
+              stripe_payment_intent_id: session.payment_intent as string,
+              stripe_customer_id: session.customer as string,
+            })
+            .eq('id', ticketRecordId)
+
+          if (updateError) {
+            console.error('Error updating ticket record:', updateError)
+            break
+          }
+
+          console.log(`✅ Ticket ${ticketRecordId} marked as paid`)
+
+          // TODO: Send confirmation email to buyer
         }
-
-        // Update ticket record to paid status
-        const { error: updateError } = await supabase
-          .from('event_tickets')
-          .update({
-            status: 'paid',
-            stripe_payment_intent_id: session.payment_intent as string,
-            stripe_customer_id: session.customer as string,
-          })
-          .eq('id', ticketRecordId)
-
-        if (updateError) {
-          console.error('Error updating ticket record:', updateError)
-          break
-        }
-
-        console.log(`✅ Ticket ${ticketRecordId} marked as paid`)
-
-        // TODO: Send confirmation email to buyer
-        // You can use a service like SendGrid, Resend, or Nodemailer here
 
         break
       }
@@ -134,6 +138,20 @@ export async function POST(request: NextRequest) {
         break
       }
 
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice
+        if (invoice.subscription && invoice.billing_reason !== 'subscription_create') {
+          await handleRecurringDonation(invoice, supabase, stripe)
+        }
+        break
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription
+        await handleSubscriptionCancelled(subscription, supabase)
+        break
+      }
+
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
@@ -146,4 +164,115 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+/**
+ * Handle donation checkout completion
+ */
+async function handleDonationCheckout(
+  session: Stripe.Checkout.Session,
+  supabase: ReturnType<typeof getSupabaseClient>
+) {
+  const metadata = session.metadata
+
+  if (!metadata) {
+    console.error('No metadata in donation checkout session')
+    return
+  }
+
+  const isRecurring = session.mode === 'subscription'
+
+  // Create donation record
+  const donationData = {
+    stripe_payment_intent_id: isRecurring ? null : (session.payment_intent as string),
+    stripe_customer_id: session.customer as string,
+    stripe_subscription_id: isRecurring ? (session.subscription as string) : null,
+    user_id: metadata.user_id || null,
+    amount: session.amount_total || 0,
+    currency: session.currency || 'usd',
+    status: 'succeeded',
+    donation_type: metadata.donation_type || 'general',
+    is_recurring: isRecurring,
+    recurring_interval: isRecurring ? metadata.frequency : null,
+    student_grade: metadata.student_grade || null,
+    campus: metadata.campus || null,
+    donor_name: metadata.donor_name,
+    donor_email: metadata.donor_email,
+    is_anonymous: metadata.is_anonymous === 'true',
+    message: metadata.message || null,
+    metadata: metadata,
+  }
+
+  const { error } = await supabase.from('donations').insert(donationData)
+
+  if (error) {
+    console.error('Error creating donation record:', error)
+    throw error
+  }
+
+  console.log('✅ Donation record created successfully')
+}
+
+/**
+ * Handle recurring donation invoice payment
+ */
+async function handleRecurringDonation(
+  invoice: Stripe.Invoice,
+  supabase: ReturnType<typeof getSupabaseClient>,
+  stripe: Stripe
+) {
+  if (!invoice.subscription) return
+
+  const subscriptionId = invoice.subscription as string
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+  const metadata = subscription.metadata
+
+  const donationData = {
+    stripe_payment_intent_id: invoice.payment_intent as string,
+    stripe_customer_id: invoice.customer as string,
+    stripe_subscription_id: subscriptionId,
+    user_id: metadata?.user_id || null,
+    amount: invoice.amount_paid,
+    currency: invoice.currency,
+    status: 'succeeded',
+    donation_type: metadata?.donation_type || 'general',
+    is_recurring: true,
+    recurring_interval: metadata?.frequency || null,
+    student_grade: metadata?.student_grade || null,
+    campus: metadata?.campus || null,
+    donor_name: metadata?.donor_name || null,
+    donor_email: metadata?.donor_email || null,
+    is_anonymous: metadata?.is_anonymous === 'true',
+    message: metadata?.message || null,
+    metadata: metadata,
+  }
+
+  const { error } = await supabase.from('donations').insert(donationData)
+
+  if (error) {
+    console.error('Error creating recurring donation record:', error)
+    throw error
+  }
+
+  console.log('✅ Recurring donation recorded')
+}
+
+/**
+ * Handle subscription cancellation
+ */
+async function handleSubscriptionCancelled(
+  subscription: Stripe.Subscription,
+  supabase: ReturnType<typeof getSupabaseClient>
+) {
+  const { error } = await supabase
+    .from('donations')
+    .update({ status: 'cancelled' } as any)
+    .eq('stripe_subscription_id', subscription.id)
+    .eq('status', 'succeeded')
+
+  if (error) {
+    console.error('Error updating cancelled subscription:', error)
+  }
+
+  console.log('✅ Subscription cancelled in database')
 }
