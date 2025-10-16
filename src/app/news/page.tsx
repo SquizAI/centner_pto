@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { NewsFeatured, NewsGrid } from '@/components/news';
 import { NewsPost } from '@/types/news.types';
+import { NewsClient } from './news-client';
 
 export const metadata: Metadata = {
   title: 'News & Updates | Centner Academy PTO',
@@ -55,9 +55,6 @@ export default async function NewsPage() {
       );
     }
 
-    // Split featured post (first one) from the rest
-    const [featuredPost, ...remainingPosts] = posts;
-
     return (
       <div className="container mx-auto px-4 py-12">
         {/* Page Header */}
@@ -70,20 +67,8 @@ export default async function NewsPage() {
           </p>
         </header>
 
-        {/* Featured Post */}
-        {featuredPost && (
-          <section className="mb-16">
-            <NewsFeatured post={featuredPost} />
-          </section>
-        )}
-
-        {/* Remaining Posts Grid */}
-        {remainingPosts.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold mb-8">Latest Updates</h2>
-            <NewsGrid posts={remainingPosts} columns={3} />
-          </section>
-        )}
+        {/* News Client with Filtering and Pagination */}
+        <NewsClient posts={posts} />
       </div>
     );
   } catch (error) {

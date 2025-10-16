@@ -29,6 +29,10 @@ const nextConfig = {
       },
     ],
   },
+  compiler: {
+    // Enable modern JSX transform for better performance
+    reactRemoveProperties: true,
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',

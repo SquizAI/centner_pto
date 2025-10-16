@@ -59,10 +59,10 @@ export default function NewsError({
         <p className="text-sm text-muted-foreground mt-8">
           If the problem persists, please contact{' '}
           <a
-            href="mailto:support@centneracademy.com"
+            href="mailto:info@centnerpto.org"
             className="text-primary hover:underline"
           >
-            support@centneracademy.com
+            info@centnerpto.org
           </a>
         </p>
       </div>

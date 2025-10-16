@@ -39,6 +39,31 @@ export interface ActionResult {
 }
 
 /**
+ * Sign in with OAuth provider
+ */
+export async function signInWithOAuth(
+  provider: 'google' | 'facebook' | 'github' | 'twitter',
+  redirectTo?: string
+): Promise<void> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${redirectTo || '/dashboard'}`,
+    },
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (data.url) {
+    redirect(data.url)
+  }
+}
+
+/**
  * Sign in with email and password
  */
 export async function signIn(
@@ -52,7 +77,7 @@ export async function signIn(
 
     const supabase = await createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: validated.email,
       password: validated.password,
     })
@@ -61,6 +86,28 @@ export async function signIn(
       return {
         success: false,
         error: error.message,
+      }
+    }
+
+    // Get user profile to check role
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single()
+
+      revalidatePath('/', 'layout')
+
+      // Redirect based on role if no specific redirect is provided
+      if (!redirectTo) {
+        if (profile?.role === 'admin' || profile?.role === 'super_admin') {
+          redirect('/admin')
+        } else {
+          redirect('/dashboard')
+        }
+      } else {
+        redirect(redirectTo)
       }
     }
 

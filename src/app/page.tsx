@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import Footer from '@/components/layout/footer'
 
 export default function HomePage() {
   const fadeInUp = {
@@ -29,32 +30,40 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - Centner Academy Vibrant Style */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-[hsl(var(--light-blue))] to-[hsl(var(--teal-blue))] py-20 sm:py-32">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+      {/* Hero Section - Enhanced Centner Academy Style */}
+      <section className="relative overflow-hidden min-h-[600px] sm:min-h-[700px]">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[url('/hero-image.png')] bg-cover bg-center"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-[hsl(var(--light-blue))]/30 to-[hsl(var(--teal-blue))]/40"></div>
+        </div>
 
-        {/* Floating Bumblebee Mascot */}
+        {/* Animated Shapes */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+
+        {/* Floating Bumblebee Mascot - Left Side */}
         <motion.div
           initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="absolute left-4 sm:left-10 lg:left-20 top-1/2 -translate-y-1/2 hidden lg:block"
+          className="absolute left-4 sm:left-10 lg:left-20 top-1/2 -translate-y-1/2 hidden lg:block z-10"
         >
           <motion.div
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ y: [0, -20, 0], rotate: [-5, 5, -5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
               src="/centner-bee.png"
               alt="Centner Academy Bumblebee"
-              width={180}
-              height={180}
-              className="drop-shadow-2xl"
+              width={200}
+              height={200}
+              className="drop-shadow-2xl filter brightness-110"
             />
           </motion.div>
         </motion.div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative pt-24 sm:pt-32">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -99,14 +108,18 @@ export default function HomePage() {
               transition={{ delay: 0.5, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl text-lg px-8 py-6 h-auto">
-                <Calendar className="w-5 h-5 mr-2" />
-                Upcoming Events
-              </Button>
-              <Button size="lg" className="bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary backdrop-blur-md text-lg px-8 py-6 h-auto font-semibold">
-                <HandHeart className="w-5 h-5 mr-2" />
-                Get Involved
-              </Button>
+              <Link href="/events">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl text-lg px-8 py-6 h-auto">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Upcoming Events
+                </Button>
+              </Link>
+              <Link href="/volunteer">
+                <Button size="lg" className="bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary backdrop-blur-md text-lg px-8 py-6 h-auto font-semibold">
+                  <HandHeart className="w-5 h-5 mr-2" />
+                  Get Involved
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -147,90 +160,100 @@ export default function HomePage() {
           >
             {/* Large Featured Card */}
             <motion.div variants={fadeInUp}>
-              <Card className="group overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 h-full bg-gradient-to-br from-primary to-[hsl(var(--teal-blue))]">
-                <CardHeader className="relative h-64 p-0">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80')] bg-cover bg-center group-hover:scale-110 transition-transform duration-500"></div>
-                  <Badge className="absolute top-4 right-4 z-20 bg-secondary text-secondary-foreground border-0">
-                    <PartyPopper className="w-3 h-3 mr-1" />
-                    Featured Event
-                  </Badge>
-                </CardHeader>
-                <CardContent className="p-6 text-white">
-                  <CardTitle className="text-2xl mb-2">Fall Festival 2025</CardTitle>
-                  <CardDescription className="text-white/80 mb-4">
-                    Join us for an amazing day of fun, games, food, and community celebration!
-                  </CardDescription>
-                  <div className="flex items-center gap-4 text-sm text-white/70">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      Oct 25, 2025
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      All Ages
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              <Link href="/events">
+                <Card className="group overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 h-full bg-gradient-to-br from-primary to-[hsl(var(--teal-blue))] cursor-pointer">
+                  <CardHeader className="relative h-64 p-0">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80')] bg-cover bg-center group-hover:scale-110 transition-transform duration-500"></div>
+                    <Badge className="absolute top-4 right-4 z-20 bg-secondary text-secondary-foreground border-0">
+                      <PartyPopper className="w-3 h-3 mr-1" />
+                      Featured Event
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-6 text-white">
+                    <CardTitle className="text-2xl mb-2">Fall Festival 2025</CardTitle>
+                    <CardDescription className="text-white/80 mb-4">
+                      Join us for an amazing day of fun, games, food, and community celebration!
+                    </CardDescription>
+                    <div className="flex items-center gap-4 text-sm text-white/70">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        Oct 25, 2025
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        All Ages
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
 
             {/* Smaller Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <motion.div variants={fadeInUp}>
-                <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-[hsl(var(--teal-blue))] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Newspaper className="w-6 h-6 text-white" />
-                    </div>
-                    <CardTitle className="text-lg">Latest Newsletter</CardTitle>
-                    <CardDescription>
-                      October 2025 edition now available
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                <Link href="/news">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-[hsl(var(--teal-blue))] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <Newspaper className="w-6 h-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Latest Newsletter</CardTitle>
+                      <CardDescription>
+                        October 2025 edition now available
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
               </motion.div>
 
               <motion.div variants={fadeInUp}>
-                <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Gift className="w-6 h-6 text-white" />
-                    </div>
-                    <CardTitle className="text-lg">Teacher Appreciation</CardTitle>
-                    <CardDescription>
-                      Help us celebrate our amazing teachers
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                <Link href="/events">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <Gift className="w-6 h-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Teacher Appreciation</CardTitle>
+                      <CardDescription>
+                        Help us celebrate our amazing teachers
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
               </motion.div>
 
               <motion.div variants={fadeInUp}>
-                <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-[hsl(var(--bright-green))] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Award className="w-6 h-6 text-white" />
-                    </div>
-                    <CardTitle className="text-lg">Fundraising Goals</CardTitle>
-                    <CardDescription>
-                      We&apos;re 75% of the way to our goal!
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                <Link href="/donate">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-[hsl(var(--bright-green))] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <Award className="w-6 h-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Fundraising Goals</CardTitle>
+                      <CardDescription>
+                        We&apos;re 75% of the way to our goal!
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
               </motion.div>
 
               <motion.div variants={fadeInUp}>
-                <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <MessageCircle className="w-6 h-6 text-white" />
-                    </div>
-                    <CardTitle className="text-lg">Join the Conversation</CardTitle>
-                    <CardDescription>
-                      Connect with other parents
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                <Link href="/about">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg h-full bg-white cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <MessageCircle className="w-6 h-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Join the Conversation</CardTitle>
+                      <CardDescription>
+                        Connect with other parents
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
               </motion.div>
             </div>
           </motion.div>
@@ -279,9 +302,11 @@ export default function HomePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--preschool))] group-hover:text-white group-hover:border-[hsl(var(--preschool))] transition-colors">
-                    Learn more →
-                  </Button>
+                  <Link href="/about">
+                    <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--preschool))] group-hover:text-white group-hover:border-[hsl(var(--preschool))] transition-colors">
+                      Learn more →
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </motion.div>
@@ -302,9 +327,11 @@ export default function HomePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--elementary))] group-hover:text-white group-hover:border-[hsl(var(--elementary))] transition-colors">
-                    Learn more →
-                  </Button>
+                  <Link href="/about">
+                    <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--elementary))] group-hover:text-white group-hover:border-[hsl(var(--elementary))] transition-colors">
+                      Learn more →
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </motion.div>
@@ -325,9 +352,11 @@ export default function HomePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--middle-high))] group-hover:text-white group-hover:border-[hsl(var(--middle-high))] transition-colors">
-                    Learn more →
-                  </Button>
+                  <Link href="/about">
+                    <Button variant="outline" className="w-full group-hover:bg-[hsl(var(--middle-high))] group-hover:text-white group-hover:border-[hsl(var(--middle-high))] transition-colors">
+                      Learn more →
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </motion.div>
@@ -372,13 +401,18 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
               Support Our Mission
             </h2>
-            <p className="text-xl text-white/90 mb-10 leading-relaxed">
+            <p className="text-xl text-white/90 mb-4 leading-relaxed">
               Your donations help us create amazing experiences and opportunities for all Centner Academy students
             </p>
-            <Button size="lg" className="bg-white hover:bg-white/90 text-accent shadow-2xl text-lg px-8 py-6 h-auto font-bold">
-              <Heart className="w-5 h-5 mr-2" />
-              Make a Donation
-            </Button>
+            <p className="text-sm text-white/80 mb-8 italic">
+              MICA PTO, Co. is a 501(c)(3) nonprofit organization. All donations are tax-deductible.
+            </p>
+            <Link href="/donate">
+              <Button size="lg" className="bg-white hover:bg-white/90 text-accent shadow-2xl text-lg px-8 py-6 h-auto font-bold">
+                <Heart className="w-5 h-5 mr-2" />
+                Make a Donation
+              </Button>
+            </Link>
           </motion.div>
         </div>
 
@@ -388,48 +422,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <Image
-                  src="/centner-bee.png"
-                  alt="Centner Bumblebee"
-                  width={60}
-                  height={60}
-                  className="drop-shadow-lg"
-                />
-                <h3 className="text-lg font-semibold">Centner Academy PTO</h3>
-              </div>
-              <p className="text-slate-400 text-sm">
-                Building community and supporting excellence in education
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/events" className="text-slate-400 hover:text-primary transition-colors">Events</Link></li>
-                <li><Link href="/volunteer" className="text-slate-400 hover:text-primary transition-colors">Volunteer</Link></li>
-                <li><Link href="/donate" className="text-slate-400 hover:text-accent transition-colors">Donate</Link></li>
-                <li><Link href="/photos" className="text-slate-400 hover:text-primary transition-colors">Photo Gallery</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Connect</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="text-slate-400 hover:text-primary transition-colors">About PTO</Link></li>
-                <li><Link href="/news" className="text-slate-400 hover:text-primary transition-colors">News & Updates</Link></li>
-                <li><Link href="/contact" className="text-slate-400 hover:text-primary transition-colors">Contact Us</Link></li>
-                <li><a href="https://centneracademy.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-primary transition-colors">Centner Academy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
-            <p>&copy; {new Date().getFullYear()} Centner Academy PTO. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

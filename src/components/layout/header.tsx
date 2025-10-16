@@ -149,12 +149,12 @@ export default function Header() {
               </Link>
               {!isLoading && <UserMenu user={user} />}
               <Button
-                size="sm"
                 variant="ghost"
-                className="lg:hidden"
+                className="lg:hidden min-w-[48px] min-h-[48px] p-3"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle mobile menu"
               >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
           </div>

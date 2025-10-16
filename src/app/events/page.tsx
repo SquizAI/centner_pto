@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Calendar, momentLocalizer, View } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -64,7 +64,8 @@ export default function EventsPage() {
     }
   }
 
-  const eventStyleGetter = (event: CalendarEvent) => {
+  // Memoize event style getter to prevent recalculation on every render
+  const eventStyleGetter = useCallback((event: CalendarEvent) => {
     const campusColors: { [key: string]: string } = {
       preschool: 'hsl(var(--preschool))',
       elementary: 'hsl(var(--elementary))',
@@ -81,13 +82,13 @@ export default function EventsPage() {
         display: 'block',
       },
     }
-  }
+  }, [])
 
-  const handleSelectEvent = (event: CalendarEvent) => {
+  const handleSelectEvent = useCallback((event: CalendarEvent) => {
     setSelectedEvent(event)
-  }
+  }, [])
 
-  const handleActionButton = () => {
+  const handleActionButton = useCallback(() => {
     if (!selectedEvent) return
 
     if (selectedEvent.ticket_enabled) {
@@ -95,9 +96,9 @@ export default function EventsPage() {
     } else {
       setRsvpDialogOpen(true)
     }
-  }
+  }, [selectedEvent])
 
-  const handleShare = (platform: 'email' | 'copy') => {
+  const handleShare = useCallback((platform: 'email' | 'copy') => {
     if (!selectedEvent) return
 
     const eventUrl = `${window.location.origin}/events/${selectedEvent.id}`
@@ -117,7 +118,10 @@ export default function EventsPage() {
       })
     }
     setShareDialogOpen(false)
-  }
+  }, [selectedEvent])
+
+  // Memoize upcoming events to prevent unnecessary recalculations
+  const upcomingEvents = useMemo(() => events.slice(0, 5), [events])
 
   return (
     <div className="min-h-screen bg-background">
@@ -324,7 +328,7 @@ export default function EventsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {events.slice(0, 5).map((event) => (
+                    {upcomingEvents.map((event) => (
                       <motion.div
                         key={event.id}
                         whileHover={{ scale: 1.02 }}

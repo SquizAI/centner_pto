@@ -21,17 +21,34 @@ export const revalidate = 3600;
 async function getPublishedAlbums(): Promise<AlbumWithStats[]> {
   const supabase = await createClient();
 
-  // Use the database function to get albums with stats
-  const { data: albums, error } = await supabase.rpc('get_recent_albums', {
-    album_limit: 100,
-  });
+  try {
+    // Fetch all albums (migration may not be applied yet)
+    // Using simple query that doesn't depend on published column
+    const { data: albums, error } = await supabase
+      .from('photo_albums')
+      .select(`
+        *,
+        photos:photos(count)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(100);
 
-  if (error) {
-    console.error('Error fetching albums:', error);
-    throw new Error('Failed to fetch albums');
+    if (error) {
+      console.error('Error fetching albums:', error);
+      // Return empty array instead of throwing to show empty state
+      return [];
+    }
+
+    // Transform the data to match AlbumWithStats type
+    return (albums || []).map((album: any) => ({
+      ...album,
+      photo_count: album.photos?.[0]?.count || 0,
+    })) as AlbumWithStats[];
+  } catch (error) {
+    console.error('Error in getPublishedAlbums:', error);
+    // Return empty array for graceful degradation
+    return [];
   }
-
-  return (albums || []) as AlbumWithStats[];
 }
 
 export default async function GalleryPage() {
