@@ -17,8 +17,7 @@ const desktopNavItems = [
   { label: 'Events', href: '/events' },
   { label: 'News', href: '/news' },
   { label: 'Volunteer', href: '/volunteer' },
-  { label: 'Photos', href: '/photos' },
-  { label: 'Store', href: '/store' },
+  { label: 'Gallery', href: '/gallery' },
 ]
 
 export default function Header() {

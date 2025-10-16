@@ -67,10 +67,15 @@ export default function UserMenu({ user }: UserMenuProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary text-white font-semibold">
+            <AvatarFallback className={isAdmin ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white font-semibold" : "bg-primary text-white font-semibold"}>
               {getUserInitials(user.profile.full_name)}
             </AvatarFallback>
           </Avatar>
+          {isAdmin && (
+            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center">
+              <Shield className="h-2.5 w-2.5 text-purple-900" />
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
