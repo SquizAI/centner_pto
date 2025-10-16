@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth-utils'
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,12 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const user = await requireAuth()
+
+  // Redirect admin users to admin dashboard
+  if (user.profile.role === 'admin' || user.profile.role === 'super_admin') {
+    redirect('/admin')
+  }
+
   const supabase = await createClient()
 
   // Fetch user's volunteer signups

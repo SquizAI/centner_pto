@@ -111,8 +111,8 @@ export async function signIn(
       }
     }
 
-    revalidatePath('/', 'layout')
-    redirect(redirectTo || '/dashboard')
+    // This should not be reached due to redirects above
+    throw new Error('Login successful but redirect failed')
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
