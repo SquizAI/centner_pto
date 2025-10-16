@@ -12,6 +12,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { createEvent } from '@/app/actions/event-actions'
 import { toast } from 'sonner'
 import { Save, Eye } from 'lucide-react'
+import { AIContentHelper } from '@/components/ai/AIContentHelper'
+import { AIImageHelper } from '@/components/ai/AIImageHelper'
 
 export function EventFormClient() {
   const router = useRouter()
@@ -90,7 +92,19 @@ export function EventFormClient() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="description">Description</Label>
+              <AIContentHelper
+                onApply={(content) => handleChange('description', content)}
+                contentType="event"
+                currentContent={formData.description}
+                context={{
+                  title: formData.title,
+                  campus: [formData.campus],
+                  eventType: formData.event_type,
+                }}
+              />
+            </div>
             <Textarea
               id="description"
               placeholder="Describe the event..."
@@ -187,7 +201,10 @@ export function EventFormClient() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image_url">Event Image URL</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="image_url">Event Image URL</Label>
+              <AIImageHelper />
+            </div>
             <Input
               id="image_url"
               type="url"
@@ -196,7 +213,7 @@ export function EventFormClient() {
               onChange={(e) => handleChange('image_url', e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Paste a URL to an event image (recommended: 1200x630px)
+              Paste a URL to an event image (recommended: 1200x630px). Use AI Image Prompt for generating images with DALL-E or similar services.
             </p>
           </div>
         </CardContent>
