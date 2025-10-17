@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { AIContentHelper } from '@/components/ai/AIContentHelper'
 import { AIImageHelper } from '@/components/ai/AIImageHelper'
+import { SocialMediaPostComposer } from '@/components/social-media/SocialMediaPostComposer'
 
 interface EventEditClientProps {
   event: any
@@ -294,6 +295,28 @@ export function EventEditClient({ event, rsvps }: EventEditClientProps) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Social Media Sharing */}
+        {formData.status === 'published' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Share Event</CardTitle>
+              <CardDescription>Post this event to social media</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SocialMediaPostComposer
+                sourceContent={`${formData.title}\n\n${formData.description}\n\nDate: ${new Date(formData.event_date).toLocaleDateString()}\nLocation: ${formData.location || 'TBA'}`}
+                sourceTitle={formData.title}
+                sourceImage={formData.image_url}
+                onPost={(result) => {
+                  if (result.success) {
+                    toast.success(`Event shared to ${result.platforms.join(' and ')}!`)
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* RSVPs Section */}
         {rsvps && rsvps.length > 0 && (

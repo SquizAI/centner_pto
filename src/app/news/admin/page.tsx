@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { Calendar, Tag, ArrowLeft, Eye, Trash2, Edit2, Plus } from 'lucide-react'
 import AIImageGenerator from '@/components/admin/AIImageGenerator'
 import { AIContentHelper } from '@/components/ai/AIContentHelper'
+import { SocialMediaPostComposer } from '@/components/social-media/SocialMediaPostComposer'
 import Image from 'next/image'
 import Link from 'next/link'
 import { NewsPost } from '@/types/news.types'
@@ -515,6 +516,28 @@ export default function NewsAdminPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Social Media Sharing */}
+        {formData.published && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Share Post</CardTitle>
+              <CardDescription>Share this news post on social media</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SocialMediaPostComposer
+                sourceContent={`${formData.title}\n\n${formData.excerpt || formData.content}`}
+                sourceTitle={formData.title}
+                sourceImage={formData.featured_image_url}
+                onPost={(result) => {
+                  if (result.success) {
+                    toast.success(`Post shared to ${result.platforms.join(' and ')}!`)
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Submit Buttons */}
         <div className="flex gap-4 justify-end">
