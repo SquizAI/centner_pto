@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Trash2, Upload, Eye, EyeOff, ExternalLink, CheckCircle2, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { AIContentHelper } from '@/components/ai/AIContentHelper';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -203,7 +204,18 @@ function CreateAlbumForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="description">Description</Label>
+          <AIContentHelper
+            onApply={(content) => setFormData({ ...formData, description: content })}
+            contentType="event"
+            currentContent={formData.description}
+            context={{
+              title: formData.title,
+              campus: [formData.campus],
+            }}
+          />
+        </div>
         <Textarea
           id="description"
           value={formData.description}
