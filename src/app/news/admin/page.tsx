@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Calendar, Tag, ArrowLeft, Eye, Trash2, Edit2, Plus } from 'lucide-react'
 import AIImageGenerator from '@/components/admin/AIImageGenerator'
+import { AIContentHelper } from '@/components/ai/AIContentHelper'
 import Image from 'next/image'
 import Link from 'next/link'
 import { NewsPost } from '@/types/news.types'
@@ -341,7 +342,19 @@ export default function NewsAdminPage() {
             </div>
 
             <div>
-              <Label htmlFor="excerpt">Excerpt</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="excerpt">Excerpt</Label>
+                <AIContentHelper
+                  onApply={(content) => handleInputChange('excerpt', content)}
+                  contentType="news"
+                  currentContent={formData.excerpt}
+                  context={{
+                    title: formData.title,
+                    description: formData.content,
+                    campus: [formData.campus],
+                  }}
+                />
+              </div>
               <Textarea
                 id="excerpt"
                 value={formData.excerpt}
@@ -352,7 +365,19 @@ export default function NewsAdminPage() {
             </div>
 
             <div>
-              <Label htmlFor="content">Content *</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="content">Content *</Label>
+                <AIContentHelper
+                  onApply={(content) => handleInputChange('content', content)}
+                  contentType="news"
+                  currentContent={formData.content}
+                  context={{
+                    title: formData.title,
+                    description: formData.excerpt,
+                    campus: [formData.campus],
+                  }}
+                />
+              </div>
               <Textarea
                 id="content"
                 value={formData.content}
