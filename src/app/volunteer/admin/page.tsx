@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Calendar, Clock, MapPin, Users, ArrowLeft, Edit2, Trash2, Plus, Mail } from 'lucide-react'
+import { AIContentHelper } from '@/components/ai/AIContentHelper'
 import Link from 'next/link'
 
 interface VolunteerOpportunity {
@@ -337,7 +338,18 @@ export default function VolunteerAdminPage() {
             </div>
 
             <div>
-              <Label htmlFor="description">Description *</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="description">Description *</Label>
+                <AIContentHelper
+                  onApply={(content) => handleInputChange('description', content)}
+                  contentType="volunteer"
+                  currentContent={formData.description}
+                  context={{
+                    title: formData.title,
+                    campus: [formData.campus],
+                  }}
+                />
+              </div>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -481,7 +493,19 @@ export default function VolunteerAdminPage() {
             </div>
 
             <div>
-              <Label htmlFor="requirements">Requirements/Skills Needed</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="requirements">Requirements/Skills Needed</Label>
+                <AIContentHelper
+                  onApply={(content) => handleInputChange('requirements', content)}
+                  contentType="volunteer"
+                  currentContent={formData.requirements}
+                  context={{
+                    title: formData.title,
+                    description: formData.description,
+                    campus: [formData.campus],
+                  }}
+                />
+              </div>
               <Textarea
                 id="requirements"
                 value={formData.requirements}
