@@ -27,7 +27,7 @@ export interface ImageGenerationOptions {
  */
 export async function generateContent(options: ContentGenerationOptions): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const systemPrompt = buildSystemPrompt(options)
     const userPrompt = options.prompt || buildDefaultPrompt(options)
@@ -46,7 +46,7 @@ export async function generateContent(options: ContentGenerationOptions): Promis
  */
 export async function generateImagePrompt(options: ImageGenerationOptions): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const prompt = `Create a detailed image generation prompt for the following:
 Subject: ${options.subject}
@@ -80,7 +80,7 @@ export async function improveContent(
   instructions: string = 'Make this more engaging and professional'
 ): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const prompt = `${instructions}
 
@@ -107,7 +107,7 @@ export async function generateSocialPost(
   tone: 'professional' | 'friendly' | 'excited' = 'friendly'
 ): Promise<{ caption: string; hashtags: string[] }> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const platformGuidelines = {
       instagram: 'Instagram post (2200 character limit, casual and visual)',
