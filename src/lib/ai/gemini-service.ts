@@ -27,16 +27,35 @@ export interface ImageGenerationOptions {
  */
 export async function generateContent(options: ContentGenerationOptions): Promise<string> {
   try {
+    console.log('[Gemini Service] Starting content generation')
+    console.log('[Gemini Service] API Key present:', !!process.env.GEMINI_API_KEY)
+    console.log('[Gemini Service] API Key length:', process.env.GEMINI_API_KEY?.length || 0)
+
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY environment variable is not set')
+    }
+
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    console.log('[Gemini Service] Model initialized')
 
     const systemPrompt = buildSystemPrompt(options)
     const userPrompt = options.prompt || buildDefaultPrompt(options)
+    console.log('[Gemini Service] Prompts built, calling API...')
 
     const result = await model.generateContent(`${systemPrompt}\n\n${userPrompt}`)
+    console.log('[Gemini Service] API call completed')
+
     const response = await result.response
-    return response.text()
+    const text = response.text()
+    console.log('[Gemini Service] Response text extracted, length:', text.length)
+
+    return text
   } catch (error) {
-    console.error('Error generating content:', error)
+    console.error('[Gemini Service] Error generating content:', error)
+    console.error('[Gemini Service] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     throw new Error('Failed to generate content. Please try again.')
   }
 }
