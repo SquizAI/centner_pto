@@ -137,15 +137,15 @@ export default async function AdminPage() {
   const isSuperAdmin = user.profile.role === 'super_admin'
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl lg:max-w-none lg:mx-0">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Shield className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         </div>
-        <p className="text-muted-foreground">
-          Welcome back, {user.profile.full_name}! Here&apos;s an overview of the PTO website.
+        <p className="text-muted-foreground max-w-3xl">
+          Welcome back, {user.profile.full_name}! Manage events, news, volunteers, and more from this dashboard. Click any card below to get started, or use the Admin button in the header to quickly navigate between sections.
         </p>
       </div>
 

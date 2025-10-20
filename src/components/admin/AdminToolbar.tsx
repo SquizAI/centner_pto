@@ -137,7 +137,7 @@ export function AdminToolbar({ userRole }: AdminToolbarProps) {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 right-4 z-50 p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:scale-110 transition-transform"
+        className="lg:hidden fixed bottom-4 right-4 z-50 p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:scale-110 transition-transform"
       >
         <Shield className="h-5 w-5" />
       </motion.button>
@@ -150,7 +150,7 @@ export function AdminToolbar({ userRole }: AdminToolbarProps) {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 100 }}
-        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
       >
         <div className="container mx-auto px-4 pb-4">
           <div className="ml-auto max-w-4xl pointer-events-auto">

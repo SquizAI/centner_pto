@@ -35,15 +35,15 @@ export default async function AdminEventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-7xl mx-auto">
+      <div className="container mx-auto px-4 py-8 lg:py-12">
+        <div className="max-w-7xl mx-auto lg:mx-0 lg:max-w-none">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               Event Management
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Create, edit, and manage all events
+            <p className="text-base lg:text-lg text-muted-foreground max-w-3xl">
+              Create, edit, and manage events for the PTO calendar. Click <span className="font-semibold">Create Event</span> to add a new event, or select an existing event below to edit or delete it. Use the filters to view events by status or campus.
             </p>
           </div>
 

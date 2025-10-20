@@ -33,6 +33,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true)
 
+      // Skip cart initialization if Shopify is not configured
+      if (!shopifyClient.isConfigured()) {
+        console.log('Shopify not configured, skipping cart initialization')
+        return
+      }
+
       // Check if we have a cart ID in localStorage
       const savedCartId = localStorage.getItem(CART_ID_KEY)
 
@@ -52,7 +58,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Error initializing cart:', error)
-      toast.error('Failed to initialize cart')
+      // Don't show toast if Shopify is not configured
+      if (shopifyClient.isConfigured()) {
+        toast.error('Failed to initialize cart')
+      }
     } finally {
       setIsLoading(false)
     }

@@ -12,6 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { User, Settings, LayoutDashboard, Shield, LogOut, Loader2 } from 'lucide-react'
 import { getUserInitials } from '@/lib/utils/user-helpers'
@@ -35,12 +41,26 @@ interface UserMenuProps {
     email: string
     profile: Profile
   } | null
+  isMobile?: boolean
 }
 
-export default function UserMenu({ user }: UserMenuProps) {
+export default function UserMenu({ user, isMobile = false }: UserMenuProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   if (!user) {
+    // Mobile version - full width button
+    if (isMobile) {
+      return (
+        <Link href="/login" className="w-full">
+          <Button size="default" variant="outline" className="w-full">
+            <User className="w-4 h-4 mr-2" />
+            Login
+          </Button>
+        </Link>
+      )
+    }
+
+    // Desktop version - small button
     return (
       <Link href="/login">
         <Button size="sm" variant="outline">
@@ -62,22 +82,70 @@ export default function UserMenu({ user }: UserMenuProps) {
 
   const isAdmin = user.profile.role === 'admin' || user.profile.role === 'super_admin'
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className={isAdmin ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white font-semibold" : "bg-primary text-white font-semibold"}>
-              {getUserInitials(user.profile.full_name)}
-            </AvatarFallback>
-          </Avatar>
-          {isAdmin && (
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center">
-              <Shield className="h-2.5 w-2.5 text-purple-900" />
-            </span>
+  // Mobile version - full width buttons
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-col gap-2">
+        <Link href="/dashboard" className="w-full">
+          <Button size="default" variant="outline" className="w-full justify-start">
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            My Dashboard
+          </Button>
+        </Link>
+        <Link href="/dashboard" className="w-full">
+          <Button size="default" variant="outline" className="w-full justify-start">
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </Button>
+        </Link>
+        <Button
+          size="default"
+          variant="outline"
+          className="w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-50"
+          onClick={handleSignOut}
+          disabled={isLoggingOut}
+        >
+          {isLoggingOut ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Signing out...
+            </>
+          ) : (
+            <>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </>
           )}
         </Button>
-      </DropdownMenuTrigger>
+      </div>
+    )
+  }
+
+  // Desktop version - avatar dropdown
+  return (
+    <TooltipProvider>
+      <DropdownMenu>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className={isAdmin ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white font-semibold" : "bg-primary text-white font-semibold"}>
+                    {getUserInitials(user.profile.full_name)}
+                  </AvatarFallback>
+                </Avatar>
+                {isAdmin && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center">
+                    <Shield className="h-2.5 w-2.5 text-purple-900" />
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Account menu • Logout here</p>
+          </TooltipContent>
+        </Tooltip>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
@@ -129,6 +197,7 @@ export default function UserMenu({ user }: UserMenuProps) {
           )}
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenu>
+    </TooltipProvider>
   )
 }

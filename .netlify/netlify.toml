@@ -1,0 +1,81 @@
+headersOrigin = "inline"
+redirectsOrigin = "inline"
+
+[images]
+remote_images = ["^(?:https:\\/\\/(?!\\.)(?=.)[^/]*?\\.supabase\\.co\\/storage\\/v1\\/object\\/public(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$", "^(?:https:\\/\\/centneracademy\\.com(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$", "^(?:https:\\/\\/myuniformsoccerlocker\\.com(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$", "^(?:https:\\/\\/images\\.unsplash\\.com(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$", "^(?:https:\\/\\/images\\.crunchbase\\.com(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$", "^(?:https:\\/\\/cdn\\.shopify\\.com(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$"]
+
+[functions]
+
+[functions."*"]
+
+[[plugins]]
+origin = "config"
+package = "@netlify/plugin-nextjs"
+
+[plugins.inputs]
+
+[build]
+publish = "/Users/mattysquarzoni/Library/Mobile Documents/com~apple~CloudDocs/Centner_PTO/centner-pto-website/.next"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+
+[build.environment]
+NODE_VERSION = "20"
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+for = "/_next/static/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+from = "/_next/image"
+to = "/.netlify/images?url=:url&w=:width&q=:quality"
+status = 200.0
+force = false
+
+[redirects.query]
+url = ":url"
+w = ":width"
+q = ":quality"
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/_ipx/*"
+to = "/.netlify/images?url=:url&w=:width&q=:quality"
+status = 200.0
+force = false
+
+[redirects.query]
+url = ":url"
+w = ":width"
+q = ":quality"
+
+[redirects.conditions]
+
+[redirects.headers]

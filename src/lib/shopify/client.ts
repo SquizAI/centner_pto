@@ -156,6 +156,11 @@ class ShopifyClient {
     }
   }
 
+  // Check if Shopify is configured
+  isConfigured(): boolean {
+    return !!(this.domain && this.storefrontAccessToken)
+  }
+
   private async graphqlRequest<T>(query: string, variables: Record<string, any> = {}): Promise<T> {
     if (!this.domain || !this.storefrontAccessToken) {
       throw new Error('Shopify client not configured. Please set environment variables.')

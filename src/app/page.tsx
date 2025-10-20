@@ -11,7 +11,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import Footer from '@/components/layout/footer'
 
 export default function HomePage() {
   const fadeInUp = {
@@ -420,9 +419,6 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
       </section>
-
-      {/* Footer */}
-      <Footer />
     </div>
   )
 }

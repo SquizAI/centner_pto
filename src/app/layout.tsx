@@ -53,10 +53,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}>
         <CartProvider>
           <Header />
-          <main className="pb-16 lg:pb-0">{children}</main>
+          <main className="flex-1 pb-16 lg:pb-0">{children}</main>
           <Footer />
           <MobileNav />
           <AdminToolbarWrapper />

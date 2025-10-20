@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Heart, ShoppingBag, Menu, X } from 'lucide-react'
+import { Heart, ShoppingBag, Menu, X, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
@@ -129,6 +129,22 @@ export default function Header() {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
+              {/* Admin Quick Actions for Desktop */}
+              {user && (user.profile.role === 'admin' || user.profile.role === 'super_admin') && (
+                <div className="hidden lg:flex items-center gap-2 mr-2 pr-2 border-r border-gray-200">
+                  <Link href="/admin">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-purple-600 hover:bg-purple-50"
+                    >
+                      <Shield className="w-4 h-4 mr-1.5" />
+                      Admin
+                    </Button>
+                  </Link>
+                </div>
+              )}
+
               <Link href="/donate" className="hidden sm:block">
                 <Button
                   size="sm"
@@ -193,6 +209,27 @@ export default function Header() {
                   )
                 })}
                 <div className="border-t pt-3 mt-2 flex flex-col gap-2">
+                  {/* Admin Button for Mobile */}
+                  {user && (user.profile.role === 'admin' || user.profile.role === 'super_admin') && (
+                    <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+                      <Button
+                        size="default"
+                        variant="outline"
+                        className="w-full border-purple-200 text-purple-600 hover:bg-purple-50"
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
+                        Admin Dashboard
+                      </Button>
+                    </Link>
+                  )}
+
+                  {/* Login/Account Button for Mobile */}
+                  {!isLoading && (
+                    <div onClick={() => setMobileMenuOpen(false)}>
+                      <UserMenu user={user} isMobile />
+                    </div>
+                  )}
+
                   <Link href="/donate" onClick={() => setMobileMenuOpen(false)}>
                     <Button
                       size="default"

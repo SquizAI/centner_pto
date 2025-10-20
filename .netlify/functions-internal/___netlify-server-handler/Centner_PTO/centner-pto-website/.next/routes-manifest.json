@@ -1,0 +1,290 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin/events/[eventId]/edit",
+      "regex": "^/admin/events/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPeventId": "nxtPeventId"
+      },
+      "namedRegex": "^/admin/events/(?<nxtPeventId>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/api/tickets/[sessionId]",
+      "regex": "^/api/tickets/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPsessionId": "nxtPsessionId"
+      },
+      "namedRegex": "^/api/tickets/(?<nxtPsessionId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/calendar/[eventId]",
+      "regex": "^/calendar/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPeventId": "nxtPeventId"
+      },
+      "namedRegex": "^/calendar/(?<nxtPeventId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/events/[eventId]",
+      "regex": "^/events/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPeventId": "nxtPeventId"
+      },
+      "namedRegex": "^/events/(?<nxtPeventId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/gallery/[slug]",
+      "regex": "^/gallery/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/gallery/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/news/[slug]",
+      "regex": "^/news/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/news/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/store/[handle]",
+      "regex": "^/store/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPhandle": "nxtPhandle"
+      },
+      "namedRegex": "^/store/(?<nxtPhandle>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/events",
+      "regex": "^/admin/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/events(?:/)?$"
+    },
+    {
+      "page": "/admin/events/create",
+      "regex": "^/admin/events/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/events/create(?:/)?$"
+    },
+    {
+      "page": "/admin/social-media",
+      "regex": "^/admin/social\\-media(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/social\\-media(?:/)?$"
+    },
+    {
+      "page": "/auth/callback",
+      "regex": "^/auth/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/callback(?:/)?$"
+    },
+    {
+      "page": "/calendar",
+      "regex": "^/calendar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/calendar(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/donate",
+      "regex": "^/donate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/donate(?:/)?$"
+    },
+    {
+      "page": "/donate/success",
+      "regex": "^/donate/success(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/donate/success(?:/)?$"
+    },
+    {
+      "page": "/events",
+      "regex": "^/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/events(?:/)?$"
+    },
+    {
+      "page": "/events/admin",
+      "regex": "^/events/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/events/admin(?:/)?$"
+    },
+    {
+      "page": "/forgot-password",
+      "regex": "^/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/gallery",
+      "regex": "^/gallery(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/gallery(?:/)?$"
+    },
+    {
+      "page": "/gallery/admin",
+      "regex": "^/gallery/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/gallery/admin(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/news",
+      "regex": "^/news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/news(?:/)?$"
+    },
+    {
+      "page": "/news/admin",
+      "regex": "^/news/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/news/admin(?:/)?$"
+    },
+    {
+      "page": "/photos",
+      "regex": "^/photos(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/photos(?:/)?$"
+    },
+    {
+      "page": "/privacy",
+      "regex": "^/privacy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy(?:/)?$"
+    },
+    {
+      "page": "/reset-password",
+      "regex": "^/reset\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/reset\\-password(?:/)?$"
+    },
+    {
+      "page": "/signup",
+      "regex": "^/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/signup(?:/)?$"
+    },
+    {
+      "page": "/store",
+      "regex": "^/store(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/store(?:/)?$"
+    },
+    {
+      "page": "/store/cart",
+      "regex": "^/store/cart(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/store/cart(?:/)?$"
+    },
+    {
+      "page": "/success",
+      "regex": "^/success(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/success(?:/)?$"
+    },
+    {
+      "page": "/tax-info",
+      "regex": "^/tax\\-info(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tax\\-info(?:/)?$"
+    },
+    {
+      "page": "/terms",
+      "regex": "^/terms(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms(?:/)?$"
+    },
+    {
+      "page": "/volunteer",
+      "regex": "^/volunteer(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/volunteer(?:/)?$"
+    },
+    {
+      "page": "/volunteer/admin",
+      "regex": "^/volunteer/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/volunteer/admin(?:/)?$"
+    },
+    {
+      "page": "/volunteer/my-shifts",
+      "regex": "^/volunteer/my\\-shifts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/volunteer/my\\-shifts(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

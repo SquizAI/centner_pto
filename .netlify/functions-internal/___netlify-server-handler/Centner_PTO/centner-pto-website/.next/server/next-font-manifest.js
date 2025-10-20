@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/mattysquarzoni/Library/Mobile Documents/com~apple~CloudDocs/Centner_PTO/centner-pto-website/src/app/layout":["static/media/e4af272ccee01ff0-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';
