@@ -6,7 +6,6 @@ import MobileNav from '@/components/layout/mobile-nav'
 import Footer from '@/components/layout/footer'
 import { Toaster } from 'sonner'
 import { CartProvider } from '@/contexts/CartContext'
-import { AdminToolbarWrapper } from '@/components/admin/AdminToolbarWrapper'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -59,7 +58,6 @@ export default function RootLayout({
           <main className="flex-1 pb-16 lg:pb-0">{children}</main>
           <Footer />
           <MobileNav />
-          <AdminToolbarWrapper />
           <Toaster position="top-right" richColors />
         </CartProvider>
       </body>
