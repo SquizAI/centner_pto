@@ -21,6 +21,9 @@ export const metadata: Metadata = {
 // Revalidate every 5 minutes (300 seconds)
 export const revalidate = 300;
 
+// Force dynamic rendering (required for cookies/server-side auth)
+export const dynamic = 'force-dynamic';
+
 async function getActiveOpportunities(): Promise<VolunteerOpportunity[]> {
   const supabase = await createClient();
 

@@ -18,6 +18,9 @@ export const metadata: Metadata = {
 // Revalidate every hour (3600 seconds)
 export const revalidate = 3600;
 
+// Force dynamic rendering (required for cookies/server-side auth)
+export const dynamic = 'force-dynamic';
+
 async function getPublishedAlbums(): Promise<AlbumWithStats[]> {
   const supabase = await createClient();
 

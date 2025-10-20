@@ -1,14 +1,10 @@
-import { Metadata } from 'next'
+'use client'
+
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { CheckCircle, Heart, Home, Mail, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-
-export const metadata: Metadata = {
-  title: 'Thank You for Your Donation',
-  description: 'Your donation to Centner Academy PTO has been received',
-}
 
 function SuccessContent() {
   return (
