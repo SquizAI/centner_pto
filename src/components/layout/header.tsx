@@ -32,22 +32,40 @@ export default function Header() {
 
     // Get initial user
     const getUser = async () => {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser()
+      try {
+        const {
+          data: { user: authUser },
+          error: authError,
+        } = await supabase.auth.getUser()
 
-      if (authUser) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single()
-
-        if (profile) {
-          setUser({ email: authUser.email!, profile })
+        if (authError) {
+          console.error('Header: Auth error:', authError)
+          setIsLoading(false)
+          return
         }
+
+        if (authUser) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authUser.id)
+            .single()
+
+          if (profileError) {
+            console.error('Header: Profile fetch error:', profileError)
+          }
+
+          if (profile) {
+            setUser({ email: authUser.email!, profile })
+          } else {
+            console.warn('Header: No profile found for user', authUser.id)
+          }
+        }
+      } catch (error) {
+        console.error('Header: Error getting user:', error)
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }
 
     getUser()
@@ -56,15 +74,29 @@ export default function Header() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
+      console.log('Header: Auth state changed:', event)
 
-        if (profile) {
-          setUser({ email: session.user.email!, profile })
+      if (session?.user) {
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profileError) {
+            console.error('Header: Profile fetch error on auth change:', profileError)
+          }
+
+          if (profile) {
+            setUser({ email: session.user.email!, profile })
+          } else {
+            console.warn('Header: No profile found for user on auth change', session.user.id)
+            setUser(null)
+          }
+        } catch (error) {
+          console.error('Header: Error fetching profile on auth change:', error)
+          setUser(null)
         }
       } else {
         setUser(null)
