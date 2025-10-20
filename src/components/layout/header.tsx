@@ -33,22 +33,24 @@ export default function Header() {
     // Get initial user
     const getUser = async () => {
       try {
+        // Use getSession() instead of getUser() for client components
+        // getSession() reads from localStorage and doesn't require server validation
         const {
-          data: { user: authUser },
-          error: authError,
-        } = await supabase.auth.getUser()
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession()
 
-        if (authError) {
-          console.error('Header: Auth error:', authError)
+        if (sessionError) {
+          console.error('Header: Session error:', sessionError)
           setIsLoading(false)
           return
         }
 
-        if (authUser) {
+        if (session?.user) {
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', authUser.id)
+            .eq('id', session.user.id)
             .single()
 
           if (profileError) {
@@ -56,9 +58,9 @@ export default function Header() {
           }
 
           if (profile) {
-            setUser({ email: authUser.email!, profile })
+            setUser({ email: session.user.email!, profile })
           } else {
-            console.warn('Header: No profile found for user', authUser.id)
+            console.warn('Header: No profile found for user', session.user.id)
           }
         }
       } catch (error) {
