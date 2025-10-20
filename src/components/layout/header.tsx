@@ -201,7 +201,13 @@ export default function Header() {
               <div className="hidden md:block">
                 <CartButton />
               </div>
-              {!isLoading && <UserMenu user={user} />}
+
+              {/* Desktop - Avatar OR Login/Logout buttons */}
+              <div className="hidden lg:flex items-center gap-2">
+                {!isLoading && <UserMenu user={user} />}
+              </div>
+
+              {/* Mobile - Hamburger Menu */}
               <Button
                 variant="ghost"
                 className="lg:hidden min-w-[48px] min-h-[48px] p-3"
