@@ -44,7 +44,17 @@ const GRADE_OPTIONS = [
   '12th',
 ]
 
-export default function DonationForm() {
+interface UserProfile {
+  name: string
+  email: string
+  phone: string
+}
+
+interface DonationFormProps {
+  userProfile: UserProfile
+}
+
+export default function DonationForm({ userProfile }: DonationFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [selectedAmount, setSelectedAmount] = useState<number | null>(100)
@@ -54,9 +64,9 @@ export default function DonationForm() {
   const [formData, setFormData] = useState({
     donationType: 'general' as keyof typeof DONATION_TYPES,
     frequency: 'one_time' as 'one_time' | 'monthly' | 'quarterly' | 'annual',
-    donorName: '',
-    donorEmail: '',
-    phone: '',
+    donorName: userProfile.name,
+    donorEmail: userProfile.email,
+    phone: userProfile.phone,
     studentName: '',
     studentGrade: '',
     campus: 'all' as 'all' | 'preschool' | 'elementary' | 'middle_high',

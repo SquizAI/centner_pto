@@ -1,13 +1,36 @@
 import { Metadata } from 'next'
 import { Heart, Users, Sparkles, GraduationCap, Palette, Bus, Trophy, Rocket } from 'lucide-react'
 import DonationForm from '@/components/donations/DonationForm'
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Donate',
   description: 'Support Centner Academy PTO and help us make a difference in our students\' education',
 }
 
-export default function DonatePage() {
+export default async function DonatePage() {
+  const supabase = await createClient()
+
+  // Get authenticated user
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login?redirectTo=/donate')
+  }
+
+  // Get user profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
+  const userProfile = {
+    name: profile?.name || '',
+    email: user.email || '',
+    phone: profile?.phone || '',
+  }
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4 py-12 md:py-20">
@@ -101,7 +124,7 @@ export default function DonatePage() {
           </div>
 
           {/* Donation Form */}
-          <DonationForm />
+          <DonationForm userProfile={userProfile} />
 
           {/* Trust Badges */}
           <div className="mt-12 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-xl p-6 md:p-8 text-center">

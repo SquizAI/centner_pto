@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Protected route patterns
-  const protectedRoutes = ['/dashboard', '/admin']
+  const protectedRoutes = ['/dashboard', '/admin', '/donate']
   const adminRoutes = ['/admin', '/gallery/admin', '/volunteer/admin', '/news/admin', '/events/admin']
 
   // Check if route requires authentication
