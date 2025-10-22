@@ -463,7 +463,7 @@ var writeHandlerFile = async (ctx, { matchers, name }) => {
     basePath: nextConfig.basePath,
     i18n: nextConfig.i18n,
     trailingSlash: nextConfig.trailingSlash,
-    skipMiddlewareUrlNormalize: nextConfig.skipMiddlewareUrlNormalize
+    skipMiddlewareUrlNormalize: nextConfig.skipProxyUrlNormalize ?? nextConfig.skipMiddlewareUrlNormalize
   };
   await writeFile(
     join(handlerRuntimeDirectory, "next.config.json"),

@@ -55,11 +55,11 @@ var getMemoizedKeyValueStoreBackedByRegionalBlobStore = (...args) => {
         return memoizedValue;
       }
       const blobKey = await encodeBlobKey(key);
-      const getPromise = tracer.withActiveSpan(otelSpanTitle, async (span) => {
-        span.setAttributes({ key, blobKey });
+      const getPromise = (0, import_tracer.withActiveSpan)(tracer, otelSpanTitle, async (span) => {
+        span?.setAttributes({ key, blobKey });
         const blob = await store.get(blobKey, { type: "json" });
         inMemoryCache.set(key, blob);
-        span.addEvent(blob ? "Hit" : "Miss");
+        span?.addEvent(blob ? "Hit" : "Miss");
         return blob;
       });
       inMemoryCache.set(key, getPromise);
@@ -69,8 +69,8 @@ var getMemoizedKeyValueStoreBackedByRegionalBlobStore = (...args) => {
       const inMemoryCache = (0, import_request_scoped_in_memory_cache.getRequestScopedInMemoryCache)();
       inMemoryCache.set(key, value);
       const blobKey = await encodeBlobKey(key);
-      return tracer.withActiveSpan(otelSpanTitle, async (span) => {
-        span.setAttributes({ key, blobKey });
+      return (0, import_tracer.withActiveSpan)(tracer, otelSpanTitle, async (span) => {
+        span?.setAttributes({ key, blobKey });
         return await store.setJSON(blobKey, value);
       });
     }

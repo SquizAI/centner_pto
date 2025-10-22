@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { stripe, STRIPE_CONFIG } from '@/lib/stripe/config'
+import { getStripe, STRIPE_CONFIG } from '@/lib/stripe/config'
 import { z } from 'zod'
 import Stripe from 'stripe'
 
@@ -72,7 +72,7 @@ export async function createCheckoutSession(
 
     // If no customer ID, create a new customer
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: validated.donorEmail,
         name: validated.donorName,
         metadata: {
@@ -174,7 +174,7 @@ export async function createCheckoutSession(
     }
 
     // Create the checkout session
-    const session = await stripe.checkout.sessions.create(sessionConfig)
+    const session = await getStripe().checkout.sessions.create(sessionConfig)
 
     return {
       success: true,
@@ -442,7 +442,7 @@ export async function cancelRecurringDonation(subscriptionId: string): Promise<A
     }
 
     // Cancel the subscription in Stripe
-    await stripe.subscriptions.cancel(subscriptionId)
+    await getStripe().subscriptions.cancel(subscriptionId)
 
     // Update the donation record
     await supabase

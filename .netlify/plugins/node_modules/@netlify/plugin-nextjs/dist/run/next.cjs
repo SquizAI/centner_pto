@@ -545,8 +545,7 @@ ResponseCache.prototype.get = function get(...getArgs) {
 async function getMockedRequestHandler(nextConfig, ...args) {
   const initContext = { initializingServer: true };
   const initAsyncLocalStorage = new import_node_async_hooks.AsyncLocalStorage();
-  const tracer = (0, import_tracer.getTracer)();
-  return tracer.withActiveSpan("mocked request handler", async () => {
+  return (0, import_tracer.withActiveSpan)((0, import_tracer.getTracer)(), "mocked request handler", async () => {
     const ofs = { ...import_promises.default };
     async function readFileFallbackBlobStore(...fsargs) {
       const [path, options] = fsargs;

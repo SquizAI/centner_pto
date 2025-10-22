@@ -25,40 +25,12 @@ __export(regional_blob_store_exports, {
 });
 module.exports = __toCommonJS(regional_blob_store_exports);
 
-// node_modules/@netlify/blobs/dist/chunk-XR3MUBBK.js
-var NF_ERROR = "x-nf-error";
-var NF_REQUEST_ID = "x-nf-request-id";
-var BlobsInternalError = class extends Error {
-  constructor(res) {
-    let details = res.headers.get(NF_ERROR) || `${res.status} status code`;
-    if (res.headers.has(NF_REQUEST_ID)) {
-      details += `, ID: ${res.headers.get(NF_REQUEST_ID)}`;
-    }
-    super(`Netlify Blobs has generated an internal error (${details})`);
-    this.name = "BlobsInternalError";
-  }
-};
-var collectIterator = async (iterator) => {
-  const result = [];
-  for await (const item of iterator) {
-    result.push(item);
-  }
-  return result;
-};
-var base64Decode = (input) => {
-  const { Buffer: Buffer2 } = globalThis;
-  if (Buffer2) {
-    return Buffer2.from(input, "base64").toString();
-  }
-  return atob(input);
-};
-var base64Encode = (input) => {
-  const { Buffer: Buffer2 } = globalThis;
-  if (Buffer2) {
-    return Buffer2.from(input).toString("base64");
-  }
-  return btoa(input);
-};
+// node_modules/@netlify/blobs/node_modules/@netlify/runtime-utils/dist/main.js
+var getString = (input) => typeof input === "string" ? input : JSON.stringify(input);
+var base64Decode = globalThis.Buffer ? (input) => Buffer.from(input, "base64").toString() : (input) => atob(input);
+var base64Encode = globalThis.Buffer ? (input) => Buffer.from(getString(input)).toString("base64") : (input) => btoa(getString(input));
+
+// node_modules/@netlify/blobs/dist/chunk-HN33TXZT.js
 var getEnvironment = () => {
   const { Deno, Netlify, process: process2 } = globalThis;
   return Netlify?.env ?? Deno?.env ?? {
@@ -111,7 +83,7 @@ var encodeMetadata = (metadata) => {
   return payload;
 };
 var decodeMetadata = (header) => {
-  if (!header || !header.startsWith(BASE64_PREFIX)) {
+  if (!header?.startsWith(BASE64_PREFIX)) {
     return {};
   }
   const encodedData = header.slice(BASE64_PREFIX.length);
@@ -131,6 +103,25 @@ var getMetadataFromResponse = (response) => {
       "An internal error occurred while trying to retrieve the metadata for an entry. Please try updating to the latest version of the Netlify Blobs client."
     );
   }
+};
+var NF_ERROR = "x-nf-error";
+var NF_REQUEST_ID = "x-nf-request-id";
+var BlobsInternalError = class extends Error {
+  constructor(res) {
+    let details = res.headers.get(NF_ERROR) || `${res.status} status code`;
+    if (res.headers.has(NF_REQUEST_ID)) {
+      details += `, ID: ${res.headers.get(NF_REQUEST_ID)}`;
+    }
+    super(`Netlify Blobs has generated an internal error (${details})`);
+    this.name = "BlobsInternalError";
+  }
+};
+var collectIterator = async (iterator) => {
+  const result = [];
+  for await (const item of iterator) {
+    result.push(item);
+  }
+  return result;
 };
 var BlobsConsistencyError = class extends Error {
   constructor() {
@@ -283,6 +274,7 @@ var Client = class {
   }
   async makeRequest({
     body,
+    conditions = {},
     consistency,
     headers: extraHeaders,
     key,
@@ -305,6 +297,11 @@ var Client = class {
     };
     if (method === "put") {
       headers["cache-control"] = "max-age=0, stale-while-revalidate=60";
+    }
+    if ("onlyIfMatch" in conditions && conditions.onlyIfMatch) {
+      headers["if-match"] = conditions.onlyIfMatch;
+    } else if ("onlyIfNew" in conditions && conditions.onlyIfNew) {
+      headers["if-none-match"] = "*";
     }
     const options = {
       body,
@@ -344,6 +341,8 @@ var getClientOptions = (options, contextOverride) => {
 var DEPLOY_STORE_PREFIX = "deploy:";
 var LEGACY_STORE_INTERNAL_PREFIX = "netlify-internal/legacy-namespace/";
 var SITE_STORE_PREFIX = "site:";
+var STATUS_OK = 200;
+var STATUS_PRE_CONDITION_FAILED = 412;
 var Store = class _Store {
   constructor(options) {
     this.client = options.client;
@@ -468,36 +467,56 @@ var Store = class _Store {
       )
     );
   }
-  async set(key, data, { metadata } = {}) {
+  async set(key, data, options = {}) {
     _Store.validateKey(key);
+    const conditions = _Store.getConditions(options);
     const res = await this.client.makeRequest({
+      conditions,
       body: data,
       key,
-      metadata,
+      metadata: options.metadata,
       method: "put",
       storeName: this.name
     });
-    if (res.status !== 200) {
-      throw new BlobsInternalError(res);
+    const etag = res.headers.get("etag") ?? "";
+    if (conditions) {
+      return res.status === STATUS_PRE_CONDITION_FAILED ? { modified: false } : { etag, modified: true };
     }
+    if (res.status === STATUS_OK) {
+      return {
+        etag,
+        modified: true
+      };
+    }
+    throw new BlobsInternalError(res);
   }
-  async setJSON(key, data, { metadata } = {}) {
+  async setJSON(key, data, options = {}) {
     _Store.validateKey(key);
+    const conditions = _Store.getConditions(options);
     const payload = JSON.stringify(data);
     const headers = {
       "content-type": "application/json"
     };
     const res = await this.client.makeRequest({
+      ...conditions,
       body: payload,
       headers,
       key,
-      metadata,
+      metadata: options.metadata,
       method: "put",
       storeName: this.name
     });
-    if (res.status !== 200) {
-      throw new BlobsInternalError(res);
+    const etag = res.headers.get("etag") ?? "";
+    if (conditions) {
+      return res.status === STATUS_PRE_CONDITION_FAILED ? { modified: false } : { etag, modified: true };
     }
+    if (res.status === STATUS_OK) {
+      return {
+        etag,
+        modified: true
+      };
+    }
+    throw new BlobsInternalError(res);
   }
   static formatListResultBlob(result) {
     if (!result.key) {
@@ -507,6 +526,31 @@ var Store = class _Store {
       etag: result.etag,
       key: result.key
     };
+  }
+  static getConditions(options) {
+    if ("onlyIfMatch" in options && "onlyIfNew" in options) {
+      throw new Error(
+        `The 'onlyIfMatch' and 'onlyIfNew' options are mutually exclusive. Using 'onlyIfMatch' will make the write succeed only if there is an entry for the key with the given content, while 'onlyIfNew' will make the write succeed only if there is no entry for the key.`
+      );
+    }
+    if ("onlyIfMatch" in options && options.onlyIfMatch) {
+      if (typeof options.onlyIfMatch !== "string") {
+        throw new Error(`The 'onlyIfMatch' property expects a string representing an ETag.`);
+      }
+      return {
+        onlyIfMatch: options.onlyIfMatch
+      };
+    }
+    if ("onlyIfNew" in options && options.onlyIfNew) {
+      if (typeof options.onlyIfNew !== "boolean") {
+        throw new Error(
+          `The 'onlyIfNew' property expects a boolean indicating whether the write should fail if an entry for the key already exists.`
+        );
+      }
+      return {
+        onlyIfNew: true
+      };
+    }
   }
   static validateKey(key) {
     if (key === "") {
