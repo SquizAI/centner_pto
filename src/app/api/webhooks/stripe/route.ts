@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import { sendDonationReceipt } from '@/lib/email/resend'
 
 // Lazy initialize Stripe to avoid build-time errors
 function getStripeClient() {
@@ -211,6 +212,29 @@ async function handleDonationCheckout(
   }
 
   console.log('✅ Donation record created successfully')
+
+  // Send donation receipt email
+  if (metadata.donor_email && metadata.donor_name) {
+    await sendDonationReceipt({
+      donorName: metadata.donor_name,
+      donorEmail: metadata.donor_email,
+      amount: session.amount_total || 0,
+      currency: session.currency || 'usd',
+      donationType: metadata.donation_type || 'general',
+      isRecurring: isRecurring,
+      recurringInterval: isRecurring ? metadata.frequency : null,
+      transactionId: (isRecurring ? session.subscription : session.payment_intent) as string,
+      date: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+      studentName: metadata.student_name || null,
+      studentGrade: metadata.student_grade || null,
+      campus: metadata.campus || null,
+      message: metadata.message || null,
+    })
+  }
 }
 
 /**
@@ -255,6 +279,29 @@ async function handleRecurringDonation(
   }
 
   console.log('✅ Recurring donation recorded')
+
+  // Send donation receipt email for recurring payment
+  if (metadata?.donor_email && metadata?.donor_name) {
+    await sendDonationReceipt({
+      donorName: metadata.donor_name,
+      donorEmail: metadata.donor_email,
+      amount: invoice.amount_paid,
+      currency: invoice.currency,
+      donationType: metadata.donation_type || 'general',
+      isRecurring: true,
+      recurringInterval: metadata.frequency || null,
+      transactionId: invoice.payment_intent as string,
+      date: new Date(invoice.created * 1000).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+      studentName: metadata.student_name || null,
+      studentGrade: metadata.student_grade || null,
+      campus: metadata.campus || null,
+      message: metadata.message || null,
+    })
+  }
 }
 
 /**
