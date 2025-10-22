@@ -286,6 +286,35 @@ export default function EventDetailClient({
                         </div>
                       </div>
                     )}
+
+                    {/* External Ticket Sales Link */}
+                    {event.external_ticket_url && (
+                      <div className="flex items-start gap-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                        <Ticket className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                        <div className="w-full">
+                          <p className="font-medium text-sm text-muted-foreground mb-1">
+                            Tickets Available
+                          </p>
+                          <p className="text-sm mb-3">
+                            Purchase tickets through our ticketing partner
+                          </p>
+                          <Button
+                            asChild
+                            className="w-full"
+                            size="sm"
+                          >
+                            <a
+                              href={event.external_ticket_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Ticket className="w-4 h-4 mr-2" />
+                              Buy Tickets
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* RSVP Status Alert */}
@@ -327,7 +356,7 @@ export default function EventDetailClient({
               <Card className="shadow-xl border-0 sticky top-8">
                 <CardHeader>
                   <CardTitle className="text-xl">
-                    {event.ticket_enabled ? 'Get Tickets' : 'RSVP'}
+                    {event.ticket_enabled || event.external_ticket_url ? 'Get Tickets' : 'RSVP'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -364,6 +393,21 @@ export default function EventDetailClient({
                               : 'Buy Tickets'}
                           </Button>
                         </>
+                      ) : event.external_ticket_url ? (
+                        <Button
+                          asChild
+                          className="w-full"
+                          size="lg"
+                        >
+                          <a
+                            href={event.external_ticket_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Ticket className="w-4 h-4 mr-2" />
+                            Buy Tickets
+                          </a>
+                        </Button>
                       ) : (
                         <RSVPButton
                           event={event}

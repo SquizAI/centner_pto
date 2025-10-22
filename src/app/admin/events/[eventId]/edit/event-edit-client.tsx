@@ -50,6 +50,7 @@ export function EventEditClient({ event, rsvps }: EventEditClientProps) {
     ticket_enabled: event.ticket_enabled || false,
     ticket_price: event.ticket_price?.toString() || '',
     ticket_quantity: event.ticket_quantity?.toString() || '',
+    external_ticket_url: event.external_ticket_url || '',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,6 +71,7 @@ export function EventEditClient({ event, rsvps }: EventEditClientProps) {
       ticket_enabled: formData.ticket_enabled,
       ticket_price: formData.ticket_price ? parseFloat(formData.ticket_price) : undefined,
       ticket_quantity: formData.ticket_quantity ? parseInt(formData.ticket_quantity) : undefined,
+      external_ticket_url: formData.external_ticket_url || undefined,
     }
 
     const result = await updateEvent(event.id, eventData)
@@ -263,6 +265,20 @@ export function EventEditClient({ event, rsvps }: EventEditClientProps) {
               />
               <p className="text-xs text-muted-foreground">
                 Paste a URL to an event image (recommended: 1200x630px). Use AI Image Prompt for generating images with DALL-E or similar services.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="external_ticket_url">External Ticket Sales Link (Optional)</Label>
+              <Input
+                id="external_ticket_url"
+                type="url"
+                placeholder="https://eventbrite.com/your-event or https://ticketmaster.com/..."
+                value={formData.external_ticket_url}
+                onChange={(e) => handleChange('external_ticket_url', e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Add a link to external ticket sales platforms like Eventbrite, Ticketmaster, or other ticketing services.
               </p>
             </div>
           </CardContent>

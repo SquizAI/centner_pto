@@ -25,6 +25,9 @@ export interface Event {
   stripe_product_id: string | null
   stripe_price_id: string | null
   requires_approval: boolean
+
+  // External ticket sales link (e.g., Eventbrite, Ticketmaster)
+  external_ticket_url: string | null
 }
 
 export interface EventTicket {

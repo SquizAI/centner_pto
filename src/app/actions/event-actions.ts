@@ -38,6 +38,9 @@ const eventSchema = z.object({
   ticket_sales_start: z.string().optional().nullable(),
   ticket_sales_end: z.string().optional().nullable(),
   requires_approval: z.boolean().default(false).optional(),
+
+  // External ticket sales link (e.g., Eventbrite, Ticketmaster)
+  external_ticket_url: z.string().url('Invalid URL').optional().nullable(),
 })
 
 const updateEventSchema = eventSchema.partial()
