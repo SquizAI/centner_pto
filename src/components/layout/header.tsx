@@ -108,7 +108,7 @@ export default function Header() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [pathname]) // Re-check auth on navigation
 
   return (
     <>

@@ -138,22 +138,40 @@ export default function MobileNav() {
 
     // Get initial user
     const getUser = async () => {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser()
+      try {
+        // Use getSession() instead of getUser() for client components
+        // getSession() reads from localStorage and doesn't require server validation
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession()
 
-      if (authUser) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single()
-
-        if (profile) {
-          setUser({ email: authUser.email!, profile })
+        if (sessionError) {
+          console.error('MobileNav: Session error:', sessionError)
+          setIsLoading(false)
+          return
         }
+
+        if (session?.user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profileError) {
+            console.error('MobileNav: Profile fetch error:', profileError)
+          }
+
+          if (profile) {
+            setUser({ email: session.user.email!, profile })
+          }
+        }
+      } catch (error) {
+        console.error('MobileNav: Error getting user:', error)
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }
 
     getUser()
@@ -181,7 +199,7 @@ export default function MobileNav() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [pathname]) // Re-check auth on navigation
 
   const handleSignOut = async () => {
     setIsLoggingOut(true)
